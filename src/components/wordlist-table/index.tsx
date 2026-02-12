@@ -1,6 +1,16 @@
 import { Portal, Select, createListCollection } from "@chakra-ui/react";
 import { Box, Button, HStack, Table, Text } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  useReactTable,
+  getCoreRowModel,
+  getSortedRowModel,
+  getPaginationRowModel,
+  createColumnHelper,
+  flexRender,
+  type SortingState,
+  type ColumnDef,
+} from "@tanstack/react-table";
 import { eq } from "drizzle-orm";
 import { useDatabase } from "@/lib/db/hooks";
 import type { Wordlist as WordlistType } from "@/lib/db/types";
@@ -17,11 +27,12 @@ type PageSizeItem = {
   value: string;
 };
 
+const columnHelper = createColumnHelper<WordlistWithBookTitle>();
+
 const WordlistTable: React.FC<WordlistProps> = () => {
   const { db, isLoading, error } = useDatabase();
   const [wordlist, setWordlist] = useState<WordlistWithBookTitle[]>([]);
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState<string[]>(["25"]);
+  const [sorting, setSorting] = useState<SortingState>([]);
   const pageSizeCollection = createListCollection<PageSizeItem>({
     items: [
       { label: "25", value: "25" },
@@ -121,7 +132,6 @@ const WordlistTable: React.FC<WordlistProps> = () => {
         }));
 
         setWordlist(res);
-        setPage(1); // Reset to first page when data changes
       } catch (err) {
         console.error("Error fetching wordlist:", err);
       }
@@ -129,6 +139,50 @@ const WordlistTable: React.FC<WordlistProps> = () => {
 
     fetchWordlist();
   }, [db]);
+
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor("text", {
+        header: "Text",
+        enableSorting: true,
+      }),
+      columnHelper.accessor("bookTitle", {
+        header: "BookTitle",
+        enableSorting: true,
+        cell: (info) => info.getValue() || "-",
+      }),
+      columnHelper.accessor("volumeId", {
+        header: "VolumeId",
+        enableSorting: true,
+      }),
+      columnHelper.accessor("dictSuffix", {
+        header: "DictSuffix",
+        enableSorting: true,
+      }),
+      columnHelper.accessor("dateCreated", {
+        header: "DateCreated",
+        enableSorting: true,
+      }),
+    ],
+    []
+  ) as ColumnDef<WordlistWithBookTitle>[];
+
+  const table = useReactTable({
+    data: wordlist,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onSortingChange: setSorting,
+    state: {
+      sorting,
+    },
+    initialState: {
+      pagination: {
+        pageSize: 25,
+      },
+    },
+  });
 
   if (isLoading) {
     return <Text>Loading database...</Text>;
@@ -146,20 +200,23 @@ const WordlistTable: React.FC<WordlistProps> = () => {
     );
   }
 
-  // Calculate pagination
+  // Get pagination info from table
+  const {
+    pageIndex,
+    pageSize: tablePageSize,
+  } = table.getState().pagination;
+  const pageCount = table.getPageCount();
   const totalItems = wordlist.length;
-  const pageSizeNum = Number(pageSize[0]);
-  const totalPages = Math.ceil(totalItems / pageSizeNum);
-  const startIndex = (page - 1) * pageSizeNum;
-  const endIndex = startIndex + pageSizeNum;
-  const paginatedWordlist = wordlist.slice(startIndex, endIndex);
+  const startIndex = pageIndex * tablePageSize;
+  const endIndex = Math.min(startIndex + tablePageSize, totalItems);
 
   // Generate page numbers to display
   const getPageNumbers = () => {
     const pages: number[] = [];
+    const currentPage = pageIndex + 1;
     const siblingCount = 1;
-    const startPage = Math.max(1, page - siblingCount);
-    const endPage = Math.min(totalPages, page + siblingCount);
+    const startPage = Math.max(1, currentPage - siblingCount);
+    const endPage = Math.min(pageCount, currentPage + siblingCount);
 
     if (startPage > 1) {
       pages.push(1);
@@ -172,14 +229,21 @@ const WordlistTable: React.FC<WordlistProps> = () => {
       pages.push(i);
     }
 
-    if (endPage < totalPages) {
-      if (endPage < totalPages - 1) {
+    if (endPage < pageCount) {
+      if (endPage < pageCount - 1) {
         pages.push(-1); // -1 represents ellipsis
       }
-      pages.push(totalPages);
+      pages.push(pageCount);
     }
 
     return pages;
+  };
+
+  const getSortIcon = (column: any) => {
+    const sort = column.getIsSorted();
+    if (sort === "asc") return " ↑";
+    if (sort === "desc") return " ↓";
+    return "";
   };
 
   return (
@@ -189,8 +253,10 @@ const WordlistTable: React.FC<WordlistProps> = () => {
           collection={pageSizeCollection}
           size="sm"
           width="10rem"
-          value={pageSize}
-          onValueChange={(e) => setPageSize(e.value)}
+          value={[tablePageSize.toString()]}
+          onValueChange={(e) => {
+            table.setPageSize(Number(e.value[0]));
+          }}
         >
           <Select.HiddenSelect />
           <Select.Label>Words per page</Select.Label>
@@ -218,29 +284,49 @@ const WordlistTable: React.FC<WordlistProps> = () => {
       </HStack>
       <Table.Root size="sm" interactive>
         <Table.Header>
-          <Table.Row>
-            <Table.ColumnHeader>Text</Table.ColumnHeader>
-            <Table.ColumnHeader>BookTitle</Table.ColumnHeader>
-            <Table.ColumnHeader>VolumeId</Table.ColumnHeader>
-            <Table.ColumnHeader>DictSuffix</Table.ColumnHeader>
-            <Table.ColumnHeader>DateCreated</Table.ColumnHeader>
-          </Table.Row>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <Table.Row key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <Table.ColumnHeader
+                  key={header.id}
+                  cursor={header.column.getCanSort() ? "pointer" : "default"}
+                  onClick={header.column.getToggleSortingHandler()}
+                  userSelect="none"
+                >
+                  {header.isPlaceholder ? null : (
+                    <Box as="span" display="inline-flex" alignItems="center" gap={1}>
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.column.getCanSort() && getSortIcon(header.column)}
+                    </Box>
+                  )}
+                </Table.ColumnHeader>
+              ))}
+            </Table.Row>
+          ))}
         </Table.Header>
         <Table.Body>
-          {wordlist.length === 0 ? (
+          {table.getRowModel().rows.length === 0 ? (
             <Table.Row>
-              <Table.Cell colSpan={5} textAlign="center">
+              <Table.Cell colSpan={columns.length} textAlign="center">
                 <Text color="fg.muted">No wordlist entries found</Text>
               </Table.Cell>
             </Table.Row>
           ) : (
-            paginatedWordlist.map((item: WordlistWithBookTitle) => (
-              <Table.Row key={item.text}>
-                <Table.Cell>{item.text}</Table.Cell>
-                <Table.Cell>{item.bookTitle || "-"}</Table.Cell>
-                <Table.Cell>{item.volumeId}</Table.Cell>
-                <Table.Cell textAlign="end">{item.dictSuffix}</Table.Cell>
-                <Table.Cell textAlign="end">{item.dateCreated}</Table.Cell>
+            table.getRowModel().rows.map((row) => (
+              <Table.Row key={row.id}>
+                {row.getVisibleCells().map((cell) => {
+                  const isLastTwoColumns =
+                    cell.column.id === "dictSuffix" ||
+                    cell.column.id === "dateCreated";
+                  return (
+                    <Table.Cell
+                      key={cell.id}
+                      textAlign={isLastTwoColumns ? "end" : "start"}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </Table.Cell>
+                  );
+                })}
               </Table.Row>
             ))
           )}
@@ -251,16 +337,16 @@ const WordlistTable: React.FC<WordlistProps> = () => {
           Showing {startIndex + 1} to {endIndex} of {totalItems} words
         </Text>
         <Text>
-          Page {page} of {totalPages}
+          Page {pageIndex + 1} of {pageCount}
         </Text>
       </HStack>
-      {totalPages > 1 && (
+      {pageCount > 1 && (
         <HStack gap={2} mt={4} justify="center">
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setPage(Math.max(1, page - 1))}
-            disabled={page === 1}
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
           >
             Previous
           </Button>
@@ -272,9 +358,9 @@ const WordlistTable: React.FC<WordlistProps> = () => {
             ) : (
               <Button
                 key={pageNum}
-                variant={page === pageNum ? "solid" : "outline"}
+                variant={pageIndex + 1 === pageNum ? "solid" : "outline"}
                 size="sm"
-                onClick={() => setPage(pageNum)}
+                onClick={() => table.setPageIndex(pageNum - 1)}
               >
                 {pageNum}
               </Button>
@@ -283,8 +369,8 @@ const WordlistTable: React.FC<WordlistProps> = () => {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => setPage(Math.min(totalPages, page + 1))}
-            disabled={page === totalPages}
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
           >
             Next
           </Button>
