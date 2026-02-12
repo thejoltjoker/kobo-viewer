@@ -1,0 +1,4192 @@
+{
+  "dialect": "sqlite",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevIds": [],
+  "version": "7",
+  "ddl": [
+    {
+      "name": "DbVersion",
+      "entityType": "tables"
+    },
+    {
+      "name": "content",
+      "entityType": "tables"
+    },
+    {
+      "name": "shortcover_page",
+      "entityType": "tables"
+    },
+    {
+      "name": "volume_shortcovers",
+      "entityType": "tables"
+    },
+    {
+      "name": "content_keys",
+      "entityType": "tables"
+    },
+    {
+      "name": "Bookmark",
+      "entityType": "tables"
+    },
+    {
+      "name": "Event",
+      "entityType": "tables"
+    },
+    {
+      "name": "Achievement",
+      "entityType": "tables"
+    },
+    {
+      "name": "Rules",
+      "entityType": "tables"
+    },
+    {
+      "name": "volume_tabs",
+      "entityType": "tables"
+    },
+    {
+      "name": "ratings",
+      "entityType": "tables"
+    },
+    {
+      "name": "ShelfContent",
+      "entityType": "tables"
+    },
+    {
+      "name": "content_settings",
+      "entityType": "tables"
+    },
+    {
+      "name": "Shelf",
+      "entityType": "tables"
+    },
+    {
+      "name": "user",
+      "entityType": "tables"
+    },
+    {
+      "name": "SyncQueue",
+      "entityType": "tables"
+    },
+    {
+      "name": "AbTest",
+      "entityType": "tables"
+    },
+    {
+      "name": "AnalyticsEvents",
+      "entityType": "tables"
+    },
+    {
+      "name": "Activity",
+      "entityType": "tables"
+    },
+    {
+      "name": "Authors",
+      "entityType": "tables"
+    },
+    {
+      "name": "BookAuthors",
+      "entityType": "tables"
+    },
+    {
+      "name": "Reviews",
+      "entityType": "tables"
+    },
+    {
+      "name": "Tab",
+      "entityType": "tables"
+    },
+    {
+      "name": "OverDriveCards",
+      "entityType": "tables"
+    },
+    {
+      "name": "OverDriveLibrary",
+      "entityType": "tables"
+    },
+    {
+      "name": "OverDriveCheckoutBook",
+      "entityType": "tables"
+    },
+    {
+      "name": "WordList",
+      "entityType": "tables"
+    },
+    {
+      "name": "Wishlist",
+      "entityType": "tables"
+    },
+    {
+      "name": "SubscriptionProducts",
+      "entityType": "tables"
+    },
+    {
+      "name": "DropboxItem",
+      "entityType": "tables"
+    },
+    {
+      "name": "KoboPlusAssetGroup",
+      "entityType": "tables"
+    },
+    {
+      "name": "KoboPlusAssets",
+      "entityType": "tables"
+    },
+    {
+      "name": "GDriveItem",
+      "entityType": "tables"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "version",
+      "entityType": "columns",
+      "table": "DbVersion"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ContentID",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "shortcoverId",
+      "entityType": "columns",
+      "table": "shortcover_page"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "volumeId",
+      "entityType": "columns",
+      "table": "volume_shortcovers"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "volumeId",
+      "entityType": "columns",
+      "table": "content_keys"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "BookmarkID",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "EventType",
+      "entityType": "columns",
+      "table": "Event"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Acknowledged",
+      "entityType": "columns",
+      "table": "Achievement"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "AchievementId",
+      "entityType": "columns",
+      "table": "Rules"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "volumeId",
+      "entityType": "columns",
+      "table": "volume_tabs"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ContentID",
+      "entityType": "columns",
+      "table": "ratings"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ShelfName",
+      "entityType": "columns",
+      "table": "ShelfContent"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ContentID",
+      "entityType": "columns",
+      "table": "content_settings"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "CreationDate",
+      "entityType": "columns",
+      "table": "Shelf"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "UserID",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Date",
+      "entityType": "columns",
+      "table": "SyncQueue"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Id",
+      "entityType": "columns",
+      "table": "AbTest"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Id",
+      "entityType": "columns",
+      "table": "AnalyticsEvents"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Id",
+      "entityType": "columns",
+      "table": "Activity"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "UserId",
+      "entityType": "columns",
+      "table": "Authors"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "AuthorId",
+      "entityType": "columns",
+      "table": "BookAuthors"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Id",
+      "entityType": "columns",
+      "table": "Reviews"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "tabId",
+      "entityType": "columns",
+      "table": "Tab"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "CardId",
+      "entityType": "columns",
+      "table": "OverDriveCards"
+    },
+    {
+      "type": "BIT",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "false",
+      "generated": null,
+      "name": "Selected",
+      "entityType": "columns",
+      "table": "OverDriveLibrary"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "id",
+      "entityType": "columns",
+      "table": "OverDriveCheckoutBook"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Text",
+      "entityType": "columns",
+      "table": "WordList"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "CrossRevisionId",
+      "entityType": "columns",
+      "table": "Wishlist"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "CrossRevisionId",
+      "entityType": "columns",
+      "table": "SubscriptionProducts"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Id",
+      "entityType": "columns",
+      "table": "DropboxItem"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Id",
+      "entityType": "columns",
+      "table": "KoboPlusAssetGroup"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "AssetGroupId",
+      "entityType": "columns",
+      "table": "KoboPlusAssets"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Id",
+      "entityType": "columns",
+      "table": "GDriveItem"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ContentType",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "PageNumber",
+      "entityType": "columns",
+      "table": "shortcover_page"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "shortcoverId",
+      "entityType": "columns",
+      "table": "volume_shortcovers"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "elementId",
+      "entityType": "columns",
+      "table": "content_keys"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "VolumeID",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "FirstOccurrence",
+      "entityType": "columns",
+      "table": "Event"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "CompleteDescription",
+      "entityType": "columns",
+      "table": "Achievement"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "EventProperty",
+      "entityType": "columns",
+      "table": "Rules"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "'abcdefff-ffff-ffff-ffff-fffffffffffd'",
+      "generated": null,
+      "name": "tabId",
+      "entityType": "columns",
+      "table": "volume_tabs"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Rating",
+      "entityType": "columns",
+      "table": "ratings"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ContentId",
+      "entityType": "columns",
+      "table": "ShelfContent"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ContentType",
+      "entityType": "columns",
+      "table": "content_settings"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Id",
+      "entityType": "columns",
+      "table": "Shelf"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "UserKey",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "VolumeId",
+      "entityType": "columns",
+      "table": "SyncQueue"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Expiration",
+      "entityType": "columns",
+      "table": "AbTest"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Type",
+      "entityType": "columns",
+      "table": "AnalyticsEvents"
+    },
+    {
+      "type": "BIT",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "TRUE",
+      "generated": null,
+      "name": "Enabled",
+      "entityType": "columns",
+      "table": "Activity"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Avatar",
+      "entityType": "columns",
+      "table": "Authors"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "BookId",
+      "entityType": "columns",
+      "table": "BookAuthors"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Header",
+      "entityType": "columns",
+      "table": "Reviews"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "tabType",
+      "entityType": "columns",
+      "table": "Tab"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "LibraryKey",
+      "entityType": "columns",
+      "table": "OverDriveCards"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "WebsiteId",
+      "entityType": "columns",
+      "table": "OverDriveLibrary"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "title",
+      "entityType": "columns",
+      "table": "OverDriveCheckoutBook"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "VolumeId",
+      "entityType": "columns",
+      "table": "WordList"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "DateModified",
+      "entityType": "columns",
+      "table": "Wishlist"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Id",
+      "entityType": "columns",
+      "table": "SubscriptionProducts"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Json",
+      "entityType": "columns",
+      "table": "DropboxItem"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "AssetGroup",
+      "entityType": "columns",
+      "table": "KoboPlusAssetGroup"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Key",
+      "entityType": "columns",
+      "table": "KoboPlusAssets"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Json",
+      "entityType": "columns",
+      "table": "GDriveItem"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "MimeType",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "FormattedPage",
+      "entityType": "columns",
+      "table": "shortcover_page"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "VolumeIndex",
+      "entityType": "columns",
+      "table": "volume_shortcovers"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "elementKey",
+      "entityType": "columns",
+      "table": "content_keys"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ContentID",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "LastOccurrence",
+      "entityType": "columns",
+      "table": "Event"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "DateCreated",
+      "entityType": "columns",
+      "table": "Achievement"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "EventType",
+      "entityType": "columns",
+      "table": "Rules"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Review",
+      "entityType": "columns",
+      "table": "ratings"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "DateModified",
+      "entityType": "columns",
+      "table": "ShelfContent"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "DateModified",
+      "entityType": "columns",
+      "table": "content_settings"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "InternalName",
+      "entityType": "columns",
+      "table": "Shelf"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "UserDisplayName",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "State",
+      "entityType": "columns",
+      "table": "SyncQueue"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Name",
+      "entityType": "columns",
+      "table": "AbTest"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Timestamp",
+      "entityType": "columns",
+      "table": "AnalyticsEvents"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Type",
+      "entityType": "columns",
+      "table": "Activity"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Name",
+      "entityType": "columns",
+      "table": "Authors"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Content",
+      "entityType": "columns",
+      "table": "Reviews"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "browseTabType",
+      "entityType": "columns",
+      "table": "Tab"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "BestLibraryKey",
+      "entityType": "columns",
+      "table": "OverDriveCards"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "LibraryKey",
+      "entityType": "columns",
+      "table": "OverDriveLibrary"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "libraryKey",
+      "entityType": "columns",
+      "table": "OverDriveCheckoutBook"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "DictSuffix",
+      "entityType": "columns",
+      "table": "WordList"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "IsAdded",
+      "entityType": "columns",
+      "table": "Wishlist"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Name",
+      "entityType": "columns",
+      "table": "SubscriptionProducts"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Timestamp",
+      "entityType": "columns",
+      "table": "KoboPlusAssetGroup"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Language",
+      "entityType": "columns",
+      "table": "KoboPlusAssets"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Path",
+      "entityType": "columns",
+      "table": "GDriveItem"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "BookID",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "StartContainerPath",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "name": "EventCount",
+      "entityType": "columns",
+      "table": "Event"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Difficulty",
+      "entityType": "columns",
+      "table": "Achievement"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "GoalValue",
+      "entityType": "columns",
+      "table": "Rules"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "DateModified",
+      "entityType": "columns",
+      "table": "ratings"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "_IsDeleted",
+      "entityType": "columns",
+      "table": "ShelfContent"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ReadingFontFamily",
+      "entityType": "columns",
+      "table": "content_settings"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "LastModified",
+      "entityType": "columns",
+      "table": "Shelf"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "UserEmail",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "GroupId",
+      "entityType": "columns",
+      "table": "AbTest"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Attributes",
+      "entityType": "columns",
+      "table": "AnalyticsEvents"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Action",
+      "entityType": "columns",
+      "table": "Activity"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "FacebookId",
+      "entityType": "columns",
+      "table": "Authors"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "CreationDate",
+      "entityType": "columns",
+      "table": "Reviews"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "displayTitle",
+      "entityType": "columns",
+      "table": "Tab"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "WebsiteId",
+      "entityType": "columns",
+      "table": "OverDriveCards"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Name",
+      "entityType": "columns",
+      "table": "OverDriveLibrary"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "cardId",
+      "entityType": "columns",
+      "table": "OverDriveCheckoutBook"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "DateCreated",
+      "entityType": "columns",
+      "table": "WordList"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "IsSynced",
+      "entityType": "columns",
+      "table": "Wishlist"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "IsPreOrder",
+      "entityType": "columns",
+      "table": "SubscriptionProducts"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Name",
+      "entityType": "columns",
+      "table": "KoboPlusAssetGroup"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Type",
+      "entityType": "columns",
+      "table": "KoboPlusAssets"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "BookTitle",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "StartContainerChildIndex",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ContentID",
+      "entityType": "columns",
+      "table": "Event"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "EventLogDescription",
+      "entityType": "columns",
+      "table": "Achievement"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Id",
+      "entityType": "columns",
+      "table": "Rules"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "_IsSynced",
+      "entityType": "columns",
+      "table": "ShelfContent"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ReadingFontSize",
+      "entityType": "columns",
+      "table": "content_settings"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Name",
+      "entityType": "columns",
+      "table": "Shelf"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "___DeviceID",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Variables",
+      "entityType": "columns",
+      "table": "AbTest"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Metrics",
+      "entityType": "columns",
+      "table": "AnalyticsEvents"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Date",
+      "entityType": "columns",
+      "table": "Activity"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "VolumeId",
+      "entityType": "columns",
+      "table": "Reviews"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "parentTabId",
+      "entityType": "columns",
+      "table": "Tab"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Name",
+      "entityType": "columns",
+      "table": "OverDriveCards"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "isAvailable",
+      "entityType": "columns",
+      "table": "OverDriveCheckoutBook"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Tiers",
+      "entityType": "columns",
+      "table": "SubscriptionProducts"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Url",
+      "entityType": "columns",
+      "table": "KoboPlusAssetGroup"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Value",
+      "entityType": "columns",
+      "table": "KoboPlusAssets"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ImageId",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "StartOffset",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "blob",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ExtraData",
+      "entityType": "columns",
+      "table": "Event"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Hidden",
+      "entityType": "columns",
+      "table": "Achievement"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Operation",
+      "entityType": "columns",
+      "table": "Rules"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ReadingAlignment",
+      "entityType": "columns",
+      "table": "content_settings"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Type",
+      "entityType": "columns",
+      "table": "Shelf"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "FacebookAuthToken",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Status",
+      "entityType": "columns",
+      "table": "AbTest"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "TestGroups",
+      "entityType": "columns",
+      "table": "AnalyticsEvents"
+    },
+    {
+      "type": "blob",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Data",
+      "entityType": "columns",
+      "table": "Activity"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "AuthorDisplayName",
+      "entityType": "columns",
+      "table": "Reviews"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "isDefault",
+      "entityType": "columns",
+      "table": "Tab"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "LastModified",
+      "entityType": "columns",
+      "table": "OverDriveCards"
+    },
+    {
+      "type": "BIT",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "suspensionFlag",
+      "entityType": "columns",
+      "table": "OverDriveCheckoutBook"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ActivationDate",
+      "entityType": "columns",
+      "table": "SubscriptionProducts"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Etag",
+      "entityType": "columns",
+      "table": "KoboPlusAssetGroup"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Title",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "EndContainerPath",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Checksum",
+      "entityType": "columns",
+      "table": "Event"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Id",
+      "entityType": "columns",
+      "table": "Achievement"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ParentRuleId",
+      "entityType": "columns",
+      "table": "Rules"
+    },
+    {
+      "type": "real",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ReadingLineHeight",
+      "entityType": "columns",
+      "table": "content_settings"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "_IsDeleted",
+      "entityType": "columns",
+      "table": "Shelf"
+    },
+    {
+      "type": "BIT",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "FALSE",
+      "generated": null,
+      "name": "HasMadePurchase",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Description",
+      "entityType": "columns",
+      "table": "AbTest"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ClientApplicationVersion",
+      "entityType": "columns",
+      "table": "AnalyticsEvents"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Sentiment",
+      "entityType": "columns",
+      "table": "Reviews"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "maxSize",
+      "entityType": "columns",
+      "table": "Tab"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "placedDate",
+      "entityType": "columns",
+      "table": "OverDriveCheckoutBook"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "DeactivationDate",
+      "entityType": "columns",
+      "table": "SubscriptionProducts"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "TimestampTo",
+      "entityType": "columns",
+      "table": "KoboPlusAssetGroup"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Attribution",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "EndContainerChildIndex",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ImageId",
+      "entityType": "columns",
+      "table": "Achievement"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ConjunctionType",
+      "entityType": "columns",
+      "table": "Rules"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ReadingLeftMargin",
+      "entityType": "columns",
+      "table": "content_settings"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "_IsVisible",
+      "entityType": "columns",
+      "table": "Shelf"
+    },
+    {
+      "type": "BIT",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "FALSE",
+      "generated": null,
+      "name": "IsOneStoreAccount",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Checksum",
+      "entityType": "columns",
+      "table": "AbTest"
+    },
+    {
+      "type": "BIT",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "FALSE",
+      "generated": null,
+      "name": "Mandatory",
+      "entityType": "columns",
+      "table": "AnalyticsEvents"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "UserId",
+      "entityType": "columns",
+      "table": "Reviews"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "totalResults",
+      "entityType": "columns",
+      "table": "Tab"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "expireDate",
+      "entityType": "columns",
+      "table": "OverDriveCheckoutBook"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "FALSE",
+      "generated": null,
+      "name": "Shown",
+      "entityType": "columns",
+      "table": "KoboPlusAssetGroup"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Description",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "EndOffset",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "IncompleteDescription",
+      "entityType": "columns",
+      "table": "Achievement"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "IsConjunction",
+      "entityType": "columns",
+      "table": "Rules"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ReadingRightMargin",
+      "entityType": "columns",
+      "table": "content_settings"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "_IsSynced",
+      "entityType": "columns",
+      "table": "Shelf"
+    },
+    {
+      "type": "BIT",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "FALSE",
+      "generated": null,
+      "name": "IsChildAccount",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "TestKey",
+      "entityType": "columns",
+      "table": "AbTest"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Likes",
+      "entityType": "columns",
+      "table": "Reviews"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "updateFrequencyMin",
+      "entityType": "columns",
+      "table": "Tab"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "estimatedAvailableDate",
+      "entityType": "columns",
+      "table": "OverDriveCheckoutBook"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "DateCreated",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Text",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Name",
+      "entityType": "columns",
+      "table": "Achievement"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Checksum",
+      "entityType": "columns",
+      "table": "Rules"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ReadingPublisherMode",
+      "entityType": "columns",
+      "table": "content_settings"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "_SyncTime",
+      "entityType": "columns",
+      "table": "Shelf"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "RefreshToken",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Dislikes",
+      "entityType": "columns",
+      "table": "Reviews"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "imageID",
+      "entityType": "columns",
+      "table": "Tab"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ShortCoverKey",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Annotation",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Ordinal",
+      "entityType": "columns",
+      "table": "Achievement"
+    },
+    {
+      "type": "BIT",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "TRUE",
+      "generated": null,
+      "name": "ActivityFacebookShare",
+      "entityType": "columns",
+      "table": "content_settings"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "LastAccessed",
+      "entityType": "columns",
+      "table": "Shelf"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "AuthToken",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Rating",
+      "entityType": "columns",
+      "table": "Reviews"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "isLeaf",
+      "entityType": "columns",
+      "table": "Tab"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "adobe_location",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "blob",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ExtraAnnotationData",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "PercentComplete",
+      "entityType": "columns",
+      "table": "Achievement"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "RecentBookSearches",
+      "entityType": "columns",
+      "table": "content_settings"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "AuthType",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "SyncDate",
+      "entityType": "columns",
+      "table": "Reviews"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "hasFeaturedLists",
+      "entityType": "columns",
+      "table": "Tab"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Publisher",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "DateCreated",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Presented",
+      "entityType": "columns",
+      "table": "Achievement"
+    },
+    {
+      "type": "BIT",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "false",
+      "generated": null,
+      "name": "AuthorNotesShown",
+      "entityType": "columns",
+      "table": "content_settings"
+    },
+    {
+      "type": "blob",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Loyalty",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Status",
+      "entityType": "columns",
+      "table": "Reviews"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "etag",
+      "entityType": "columns",
+      "table": "Tab"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "IsEncrypted",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "real",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "name": "ChapterProgress",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Synchronized",
+      "entityType": "columns",
+      "table": "Achievement"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "LastAuthorNotesSyncTime",
+      "entityType": "columns",
+      "table": "content_settings"
+    },
+    {
+      "type": "BIT",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "true",
+      "generated": null,
+      "name": "IsLibraryMigrated",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "language",
+      "entityType": "columns",
+      "table": "Tab"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "DateLastRead",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "BOOL",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "name": "Hidden",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "UserId",
+      "entityType": "columns",
+      "table": "Achievement"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "1",
+      "generated": null,
+      "name": "ZoomFactor",
+      "entityType": "columns",
+      "table": "content_settings"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "SyncContinuationToken",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "FirstTimeReading",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Version",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Checksum",
+      "entityType": "columns",
+      "table": "Achievement"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "BTBFooterSection",
+      "entityType": "columns",
+      "table": "content_settings"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "name": "Subscription",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ChapterIDBookmarked",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "DateModified",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "FacebookImageId",
+      "entityType": "columns",
+      "table": "Achievement"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "SelectedDictionary",
+      "entityType": "columns",
+      "table": "content_settings"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "LibrarySyncType",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ParagraphBookmarked",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Creator",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "BIT",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "FALSE",
+      "generated": null,
+      "name": "StillReading",
+      "entityType": "columns",
+      "table": "content_settings"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "LibrarySyncTime",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "BookmarkWordOffset",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "UUID",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "BIT",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "FALSE",
+      "generated": null,
+      "name": "SeriesShown",
+      "entityType": "columns",
+      "table": "content_settings"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "SyncTokenAppVersion",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "NumShortcovers",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "UserID",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Storefront",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "VolumeIndex",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "SyncTime",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "NewUserPromoCurrency",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "___NumPages",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "BIT",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "false",
+      "generated": null,
+      "name": "Published",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "real",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "-1.0",
+      "generated": null,
+      "name": "NewUserPromoValue",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ReadStatus",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ContextString",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "KoboAccessToken",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "___SyncTime",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Type",
+      "entityType": "columns",
+      "table": "Bookmark"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "KoboAccessTokenExpiry",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": true,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "___UserID",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "AnnotationsSyncToken",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "PublicationId",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "blob",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "PrivacyPermissions",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "___FileOffset",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "BIT",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "false",
+      "generated": null,
+      "name": "AnnotationsMigrated",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "___FileSize",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "NotebookSyncTime",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "___PercentRead",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "NotebookSyncToken",
+      "entityType": "columns",
+      "table": "user"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "___ExpirationStatus",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "-1",
+      "generated": null,
+      "name": "FavouritesIndex",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "1",
+      "generated": null,
+      "name": "Accessibility",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ContentURL",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Language",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "BookshelfTags",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "BIT",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "1",
+      "generated": null,
+      "name": "IsDownloaded",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "name": "FeedbackType",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "name": "AverageRating",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Depth",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "PageProgressDirection",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "BOOL",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "FALSE",
+      "generated": null,
+      "name": "InWishlist",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ISBN",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "\"0000-00-00T00:00:00.000\"",
+      "generated": null,
+      "name": "WishlistedDate",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "name": "FeedbackTypeSynced",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "BOOL",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "TRUE",
+      "generated": null,
+      "name": "IsSocialEnabled",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "-1",
+      "generated": null,
+      "name": "EpubType",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "2",
+      "generated": null,
+      "name": "Monetization",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ExternalId",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Series",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "SeriesNumber",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Subtitle",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "-1",
+      "generated": null,
+      "name": "WordCount",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Fallback",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "RestOfBookEstimate",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "CurrentChapterEstimate",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "real",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "CurrentChapterProgress",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "name": "PocketStatus",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "UnsyncedPocketChanges",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ImageUrl",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "DateAdded",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "WorkId",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "Properties",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "RenditionSpread",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "name": "RatingCount",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ReviewsSyncDate",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "MediaOverlay",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "MediaOverlayType",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "RedirectPreviewUrl",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "PreviewFileSize",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "EntitlementId",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "CrossRevisionId",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "DownloadUrl",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "BIT",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "false",
+      "generated": null,
+      "name": "ReadStateSynced",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "TimesStartedReading",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "TimeSpentReading",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "LastTimeStartedReading",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "LastTimeFinishedReading",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ApplicableSubscriptions",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "ExternalIds",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "PurchaseRevisionId",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "SeriesID",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "real",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "SeriesNumberFloat",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "AdobeLoanExpiration",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "bit",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "HideFromHomePage",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "BOOL",
+      "notNull": true,
+      "autoincrement": false,
+      "default": "FALSE",
+      "generated": null,
+      "name": "IsInternetArchive",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "titleKana",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "subtitleKana",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "seriesKana",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "attributionKana",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "publisherKana",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "TRUE",
+      "generated": null,
+      "name": "IsPurchaseable",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "TRUE",
+      "generated": null,
+      "name": "IsSupported",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": null,
+      "generated": null,
+      "name": "AnnotationsSyncToken",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "text",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "\"0000-00-00T00:00:00.000\"",
+      "generated": null,
+      "name": "DateModified",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "name": "StorePages",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "name": "StoreWordCount",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "name": "StoreTimeToReadLowerEstimate",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "name": "StoreTimeToReadUpperEstimate",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "name": "Duration",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "BOOL",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "NULL",
+      "generated": null,
+      "name": "IsAbridged",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "type": "integer",
+      "notNull": false,
+      "autoincrement": false,
+      "default": "0",
+      "generated": null,
+      "name": "SyncConflictType",
+      "entityType": "columns",
+      "table": "content"
+    },
+    {
+      "columns": [
+        "AssetGroupId"
+      ],
+      "tableTo": "KoboPlusAssetGroup",
+      "columnsTo": [
+        "Id"
+      ],
+      "onUpdate": "NO ACTION",
+      "onDelete": "NO ACTION",
+      "nameExplicit": true,
+      "name": "fk_KoboPlusAssets_AssetGroupId_KoboPlusAssetGroup_Id_fk",
+      "entityType": "fks",
+      "table": "KoboPlusAssets"
+    },
+    {
+      "columns": [
+        "shortcoverId",
+        "PageNumber"
+      ],
+      "nameExplicit": false,
+      "name": "shortcover_page_pk",
+      "entityType": "pks",
+      "table": "shortcover_page"
+    },
+    {
+      "columns": [
+        "volumeId",
+        "shortcoverId"
+      ],
+      "nameExplicit": false,
+      "name": "volume_shortcovers_pk",
+      "entityType": "pks",
+      "table": "volume_shortcovers"
+    },
+    {
+      "columns": [
+        "volumeId",
+        "elementId"
+      ],
+      "nameExplicit": false,
+      "name": "content_keys_pk",
+      "entityType": "pks",
+      "table": "content_keys"
+    },
+    {
+      "columns": [
+        "EventType",
+        "ContentID"
+      ],
+      "nameExplicit": false,
+      "name": "Event_pk",
+      "entityType": "pks",
+      "table": "Event"
+    },
+    {
+      "columns": [
+        "volumeId",
+        "tabId"
+      ],
+      "nameExplicit": false,
+      "name": "volume_tabs_pk",
+      "entityType": "pks",
+      "table": "volume_tabs"
+    },
+    {
+      "columns": [
+        "ShelfName",
+        "ContentId"
+      ],
+      "nameExplicit": false,
+      "name": "ShelfContent_pk",
+      "entityType": "pks",
+      "table": "ShelfContent"
+    },
+    {
+      "columns": [
+        "ContentID",
+        "ContentType"
+      ],
+      "nameExplicit": false,
+      "name": "content_settings_pk",
+      "entityType": "pks",
+      "table": "content_settings"
+    },
+    {
+      "columns": [
+        "Id",
+        "Type"
+      ],
+      "nameExplicit": false,
+      "name": "Activity_pk",
+      "entityType": "pks",
+      "table": "Activity"
+    },
+    {
+      "columns": [
+        "AuthorId",
+        "BookId"
+      ],
+      "nameExplicit": false,
+      "name": "BookAuthors_pk",
+      "entityType": "pks",
+      "table": "BookAuthors"
+    },
+    {
+      "columns": [
+        "AssetGroupId",
+        "Key",
+        "Language"
+      ],
+      "nameExplicit": false,
+      "name": "KoboPlusAssets_pk",
+      "entityType": "pks",
+      "table": "KoboPlusAssets"
+    },
+    {
+      "columns": [
+        "version"
+      ],
+      "nameExplicit": true,
+      "name": "DbVersion_pk",
+      "table": "DbVersion",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "ContentID"
+      ],
+      "nameExplicit": true,
+      "name": "content_pk",
+      "table": "content",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "BookmarkID"
+      ],
+      "nameExplicit": true,
+      "name": "Bookmark_pk",
+      "table": "Bookmark",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "ContentID"
+      ],
+      "nameExplicit": true,
+      "name": "ratings_pk",
+      "table": "ratings",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "UserID"
+      ],
+      "nameExplicit": true,
+      "name": "user_pk",
+      "table": "user",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "Id"
+      ],
+      "nameExplicit": true,
+      "name": "AbTest_pk",
+      "table": "AbTest",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "Id"
+      ],
+      "nameExplicit": true,
+      "name": "AnalyticsEvents_pk",
+      "table": "AnalyticsEvents",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "UserId"
+      ],
+      "nameExplicit": true,
+      "name": "Authors_pk",
+      "table": "Authors",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "Id"
+      ],
+      "nameExplicit": true,
+      "name": "Reviews_pk",
+      "table": "Reviews",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "tabId"
+      ],
+      "nameExplicit": true,
+      "name": "Tab_pk",
+      "table": "Tab",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "CardId"
+      ],
+      "nameExplicit": true,
+      "name": "OverDriveCards_pk",
+      "table": "OverDriveCards",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "id"
+      ],
+      "nameExplicit": true,
+      "name": "OverDriveCheckoutBook_pk",
+      "table": "OverDriveCheckoutBook",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "Text"
+      ],
+      "nameExplicit": true,
+      "name": "WordList_pk",
+      "table": "WordList",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "CrossRevisionId"
+      ],
+      "nameExplicit": true,
+      "name": "Wishlist_pk",
+      "table": "Wishlist",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "CrossRevisionId"
+      ],
+      "nameExplicit": true,
+      "name": "SubscriptionProducts_pk",
+      "table": "SubscriptionProducts",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "Id"
+      ],
+      "nameExplicit": true,
+      "name": "DropboxItem_pk",
+      "table": "DropboxItem",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "Id"
+      ],
+      "nameExplicit": true,
+      "name": "KoboPlusAssetGroup_pk",
+      "table": "KoboPlusAssetGroup",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "Id"
+      ],
+      "nameExplicit": true,
+      "name": "GDriveItem_pk",
+      "table": "GDriveItem",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "Id"
+      ],
+      "nameExplicit": true,
+      "name": "Shelf_pk",
+      "table": "Shelf",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "VolumeId"
+      ],
+      "nameExplicit": true,
+      "name": "SyncQueue_pk",
+      "table": "SyncQueue",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "WebsiteId"
+      ],
+      "nameExplicit": true,
+      "name": "OverDriveLibrary_pk",
+      "table": "OverDriveLibrary",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "Id"
+      ],
+      "nameExplicit": true,
+      "name": "Rules_pk",
+      "table": "Rules",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        "Id"
+      ],
+      "nameExplicit": true,
+      "name": "Achievement_pk",
+      "table": "Achievement",
+      "entityType": "pks"
+    },
+    {
+      "columns": [
+        {
+          "value": "Id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "activity_id_index",
+      "entityType": "indexes",
+      "table": "Activity"
+    },
+    {
+      "columns": [
+        {
+          "value": "Timestamp",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "analytics_events_timestamp",
+      "entityType": "indexes",
+      "table": "AnalyticsEvents"
+    },
+    {
+      "columns": [
+        {
+          "value": "VolumeID",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "bookmark_volume",
+      "entityType": "indexes",
+      "table": "Bookmark"
+    },
+    {
+      "columns": [
+        {
+          "value": "ContentID",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "bookmark_content",
+      "entityType": "indexes",
+      "table": "Bookmark"
+    },
+    {
+      "columns": [
+        {
+          "value": "BookID",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "content_bookid_index",
+      "entityType": "indexes",
+      "table": "content"
+    },
+    {
+      "columns": [
+        {
+          "value": "volumeId",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "content_keys_volume",
+      "entityType": "indexes",
+      "table": "content_keys"
+    },
+    {
+      "columns": [
+        {
+          "value": "ContentID",
+          "isExpression": false
+        },
+        {
+          "value": "ContentType",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "content_settings_index",
+      "entityType": "indexes",
+      "table": "content_settings"
+    },
+    {
+      "columns": [
+        {
+          "value": "AssetGroup",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "kobo_plus_asset_group_index",
+      "entityType": "indexes",
+      "table": "KoboPlusAssetGroup"
+    },
+    {
+      "columns": [
+        {
+          "value": "LibraryKey",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "OverDriveCards_LibraryKey_index",
+      "entityType": "indexes",
+      "table": "OverDriveCards"
+    },
+    {
+      "columns": [
+        {
+          "value": "CreationDate",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "shelf_creationdate_index",
+      "entityType": "indexes",
+      "table": "Shelf"
+    },
+    {
+      "columns": [
+        {
+          "value": "Name",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "shelf_name_index",
+      "entityType": "indexes",
+      "table": "Shelf"
+    },
+    {
+      "columns": [
+        {
+          "value": "Id",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "shelf_id_index",
+      "entityType": "indexes",
+      "table": "Shelf"
+    },
+    {
+      "columns": [
+        {
+          "value": "DateModified",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "shelfcontent_datemodified_index",
+      "entityType": "indexes",
+      "table": "ShelfContent"
+    },
+    {
+      "columns": [
+        {
+          "value": "shortcoverId",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "volume_shortcovers_shortcoverId",
+      "entityType": "indexes",
+      "table": "volume_shortcovers"
+    },
+    {
+      "columns": [
+        {
+          "value": "tabId",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "volume_tabs_tabId",
+      "entityType": "indexes",
+      "table": "volume_tabs"
+    },
+    {
+      "columns": [
+        {
+          "value": "volumeId",
+          "isExpression": false
+        }
+      ],
+      "isUnique": false,
+      "where": null,
+      "origin": "manual",
+      "name": "volume_tabs_volumeId",
+      "entityType": "indexes",
+      "table": "volume_tabs"
+    }
+  ],
+  "renames": []
+}
