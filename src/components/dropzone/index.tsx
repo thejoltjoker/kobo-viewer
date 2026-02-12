@@ -1,11 +1,13 @@
 import { Box, FileUpload, Icon } from "@chakra-ui/react";
 import { LuUpload } from "react-icons/lu";
 import React from "react";
-import { createDrizzleDb, initDatabase } from "@/lib/db";
+import { useDatabase } from "@/lib/db/hooks";
 
 export interface DropzoneProps {}
 
 const Dropzone: React.FC<DropzoneProps> = ({}) => {
+  const { initializeDatabase, db } = useDatabase();
+
   const handleFileAccept = async (details: { files: File[] }) => {
     console.log("File accepted:", details);
     const files = details.files;
@@ -17,12 +19,12 @@ const Dropzone: React.FC<DropzoneProps> = ({}) => {
         console.log("Processing file:", file.name, "size:", file.size);
         const buffer = await file.arrayBuffer();
         console.log("Buffer created, size:", buffer.byteLength);
-        const database = await initDatabase(buffer);
+        await initializeDatabase(buffer);
         console.log("Database initialized");
-        const db = createDrizzleDb(database);
-        console.log("Drizzle DB created");
-        const res = await db.query.wordList.findMany();
-        console.log("Query result:", res);
+        if (db) {
+          const res = await db.query.wordList.findMany();
+          console.log("Query result:", res);
+        }
       } catch (error) {
         console.error("Error processing file:", error);
       }
