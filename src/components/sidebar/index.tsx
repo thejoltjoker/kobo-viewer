@@ -37,13 +37,15 @@ interface SidebarProps {
 const navLinks: NavLinkConfig[] = [
   { id: "Overview", label: "Overview", icon: LuLayoutDashboard, to: "/" },
   { id: "Words", label: "Words", icon: LuBookOpen, to: "/wordlist" },
-  { id: "Highlights", label: "Highlights", icon: LuBookmark, to: "/highlights" },
+  {
+    id: "Bookmarks",
+    label: "Bookmarks",
+    icon: LuBookmark,
+    to: "/bookmarks",
+  },
 ];
 
-export function Sidebar({
-  isCollapsed,
-  onToggleCollapse,
-}: SidebarProps) {
+export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
   const sidebarWidth = isCollapsed ? "64px" : "240px";
   const { db } = useDatabase();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -63,12 +65,12 @@ export function Sidebar({
       transition="width 0.2s ease"
       overflow="hidden"
     >
-      <VStack align="stretch" gap={6}>
+      <VStack align="stretch" justify="center" height="100%" gap={6}>
         <HStack
           justify={isCollapsed ? "center" : "space-between"}
           align="center"
         >
-          {!isCollapsed && <Heading size="lg">Kobo Reader</Heading>}
+          {!isCollapsed && <Heading size="lg">Kobo Companion</Heading>}
           <IconButton
             aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             size="sm"
@@ -82,18 +84,22 @@ export function Sidebar({
             )}
           </IconButton>
         </HStack>
-        <VStack align="stretch" gap={2}>
+        <VStack align="stretch" justify="center" height="100%" gap={2}>
           {navLinks.map((link) => {
             const Icon = link.icon;
             return (
-              <NavLink key={link.id} to={link.to} title={isCollapsed ? link.label : undefined}>
+              <NavLink
+                key={link.id}
+                to={link.to}
+                title={isCollapsed ? link.label : undefined}
+              >
                 {({ isActive }) => (
                   <Box
                     as="span"
                     px={isCollapsed ? 2 : 3}
                     py={2}
                     borderRadius="md"
-                    bg={isActive ? "colorPalette.500" : "transparent"}
+                    bg={isActive ? "colorPalette.700" : "transparent"}
                     color={isActive ? "white" : "fg.default"}
                     _hover={{
                       bg: isActive ? "colorPalette.600" : "bg.emphasized",

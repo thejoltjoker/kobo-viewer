@@ -4,7 +4,7 @@ import { DatabaseProvider } from "./lib/db/context";
 import { Layout } from "./components/layout";
 import { OverviewPage } from "./pages/overview";
 import { WordlistPage } from "./pages/wordlist";
-import { HighlightsPage } from "./pages/highlights";
+import { BookmarksPage } from "./pages/bookmarks";
 
 function App() {
   return (
@@ -13,7 +13,7 @@ function App() {
         <Route element={<Layout />}>
           <Route index element={<OverviewPage />} />
           <Route path="wordlist" element={<WordlistPage />} />
-          <Route path="highlights" element={<HighlightsPage />} />
+          <Route path="bookmarks" element={<BookmarksPage />} />
         </Route>
       </Routes>
     </DatabaseProvider>

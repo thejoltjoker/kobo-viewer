@@ -1,15 +1,15 @@
 import { Heading, Text } from "@chakra-ui/react";
 
-export function HighlightsPage() {
+export function BookmarksPage() {
   return (
     <>
       <Heading size="xl" mb={4}>
-        Highlights
+        Bookmarks
       </Heading>
       <Text mb={6} color="fg.muted">
-        View your book highlights and annotations.
+        View your book bookmarks and annotations.
       </Text>
-      <Text color="fg.muted">Highlights feature coming soon...</Text>
+      <Text color="fg.muted">Bookmarks feature coming soon...</Text>
     </>
   );
 }

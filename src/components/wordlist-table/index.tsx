@@ -1,4 +1,5 @@
-import { Table, Text } from "@chakra-ui/react";
+import { Portal, Select, createListCollection } from "@chakra-ui/react";
+import { Box, Button, HStack, Table, Text } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { eq } from "drizzle-orm";
 import { useDatabase } from "@/lib/db/hooks";
@@ -11,9 +12,23 @@ type WordlistWithBookTitle = WordlistType & {
   bookTitle: string | null;
 };
 
+type PageSizeItem = {
+  label: string;
+  value: string;
+};
+
 const WordlistTable: React.FC<WordlistProps> = () => {
   const { db, isLoading, error } = useDatabase();
   const [wordlist, setWordlist] = useState<WordlistWithBookTitle[]>([]);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState<string[]>(["25"]);
+  const pageSizeCollection = createListCollection<PageSizeItem>({
+    items: [
+      { label: "25", value: "25" },
+      { label: "50", value: "50" },
+      { label: "100", value: "100" },
+    ],
+  });
 
   useEffect(() => {
     async function fetchWordlist() {
@@ -106,6 +121,7 @@ const WordlistTable: React.FC<WordlistProps> = () => {
         }));
 
         setWordlist(res);
+        setPage(1); // Reset to first page when data changes
       } catch (err) {
         console.error("Error fetching wordlist:", err);
       }
@@ -130,37 +146,151 @@ const WordlistTable: React.FC<WordlistProps> = () => {
     );
   }
 
+  // Calculate pagination
+  const totalItems = wordlist.length;
+  const pageSizeNum = Number(pageSize[0]);
+  const totalPages = Math.ceil(totalItems / pageSizeNum);
+  const startIndex = (page - 1) * pageSizeNum;
+  const endIndex = startIndex + pageSizeNum;
+  const paginatedWordlist = wordlist.slice(startIndex, endIndex);
+
+  // Generate page numbers to display
+  const getPageNumbers = () => {
+    const pages: number[] = [];
+    const siblingCount = 1;
+    const startPage = Math.max(1, page - siblingCount);
+    const endPage = Math.min(totalPages, page + siblingCount);
+
+    if (startPage > 1) {
+      pages.push(1);
+      if (startPage > 2) {
+        pages.push(-1); // -1 represents ellipsis
+      }
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    if (endPage < totalPages) {
+      if (endPage < totalPages - 1) {
+        pages.push(-1); // -1 represents ellipsis
+      }
+      pages.push(totalPages);
+    }
+
+    return pages;
+  };
+
   return (
-    <Table.Root size="sm" interactive>
-      <Table.Header>
-        <Table.Row>
-          <Table.ColumnHeader>Text</Table.ColumnHeader>
-          <Table.ColumnHeader>BookTitle</Table.ColumnHeader>
-          <Table.ColumnHeader>VolumeId</Table.ColumnHeader>
-          <Table.ColumnHeader>DictSuffix</Table.ColumnHeader>
-          <Table.ColumnHeader>DateCreated</Table.ColumnHeader>
-        </Table.Row>
-      </Table.Header>
-      <Table.Body>
-        {wordlist.length === 0 ? (
+    <Box width="100%">
+      <HStack justify="end">
+        <Select.Root
+          collection={pageSizeCollection}
+          size="sm"
+          width="10rem"
+          value={pageSize}
+          onValueChange={(e) => setPageSize(e.value)}
+        >
+          <Select.HiddenSelect />
+          <Select.Label>Words per page</Select.Label>
+          <Select.Control>
+            <Select.Trigger>
+              <Select.ValueText placeholder="Words per page" />
+            </Select.Trigger>
+            <Select.IndicatorGroup>
+              <Select.Indicator />
+            </Select.IndicatorGroup>
+          </Select.Control>
+          <Portal>
+            <Select.Positioner>
+              <Select.Content>
+                {pageSizeCollection.items.map((pageSize) => (
+                  <Select.Item item={pageSize} key={pageSize.value}>
+                    {pageSize.label}
+                    <Select.ItemIndicator />
+                  </Select.Item>
+                ))}
+              </Select.Content>
+            </Select.Positioner>
+          </Portal>
+        </Select.Root>
+      </HStack>
+      <Table.Root size="sm" interactive>
+        <Table.Header>
           <Table.Row>
-            <Table.Cell colSpan={5} textAlign="center">
-              <Text color="fg.muted">No wordlist entries found</Text>
-            </Table.Cell>
+            <Table.ColumnHeader>Text</Table.ColumnHeader>
+            <Table.ColumnHeader>BookTitle</Table.ColumnHeader>
+            <Table.ColumnHeader>VolumeId</Table.ColumnHeader>
+            <Table.ColumnHeader>DictSuffix</Table.ColumnHeader>
+            <Table.ColumnHeader>DateCreated</Table.ColumnHeader>
           </Table.Row>
-        ) : (
-          wordlist.map((item: WordlistWithBookTitle) => (
-            <Table.Row key={item.text}>
-              <Table.Cell>{item.text}</Table.Cell>
-              <Table.Cell>{item.bookTitle || "-"}</Table.Cell>
-              <Table.Cell>{item.volumeId}</Table.Cell>
-              <Table.Cell textAlign="end">{item.dictSuffix}</Table.Cell>
-              <Table.Cell textAlign="end">{item.dateCreated}</Table.Cell>
+        </Table.Header>
+        <Table.Body>
+          {wordlist.length === 0 ? (
+            <Table.Row>
+              <Table.Cell colSpan={5} textAlign="center">
+                <Text color="fg.muted">No wordlist entries found</Text>
+              </Table.Cell>
             </Table.Row>
-          ))
-        )}
-      </Table.Body>
-    </Table.Root>
+          ) : (
+            paginatedWordlist.map((item: WordlistWithBookTitle) => (
+              <Table.Row key={item.text}>
+                <Table.Cell>{item.text}</Table.Cell>
+                <Table.Cell>{item.bookTitle || "-"}</Table.Cell>
+                <Table.Cell>{item.volumeId}</Table.Cell>
+                <Table.Cell textAlign="end">{item.dictSuffix}</Table.Cell>
+                <Table.Cell textAlign="end">{item.dateCreated}</Table.Cell>
+              </Table.Row>
+            ))
+          )}
+        </Table.Body>
+      </Table.Root>
+      <HStack justify="space-between">
+        <Text>
+          Showing {startIndex + 1} to {endIndex} of {totalItems} words
+        </Text>
+        <Text>
+          Page {page} of {totalPages}
+        </Text>
+      </HStack>
+      {totalPages > 1 && (
+        <HStack gap={2} mt={4} justify="center">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPage(Math.max(1, page - 1))}
+            disabled={page === 1}
+          >
+            Previous
+          </Button>
+          {getPageNumbers().map((pageNum, index) =>
+            pageNum === -1 ? (
+              <Text key={`ellipsis-${index}`} px={2}>
+                ...
+              </Text>
+            ) : (
+              <Button
+                key={pageNum}
+                variant={page === pageNum ? "solid" : "outline"}
+                size="sm"
+                onClick={() => setPage(pageNum)}
+              >
+                {pageNum}
+              </Button>
+            )
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setPage(Math.min(totalPages, page + 1))}
+            disabled={page === totalPages}
+          >
+            Next
+          </Button>
+        </HStack>
+      )}
+    </Box>
   );
 };
 
