@@ -13,12 +13,7 @@ export function Layout() {
         isCollapsed={isCollapsed}
         onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
       />
-      <Box
-        as="main"
-        ml={sidebarWidth}
-        p={8}
-        transition="margin-left 0.2s ease"
-      >
+      <Box as="main" ml={sidebarWidth} p={8} transition="margin-left 0.2s ease">
         <Outlet />
       </Box>
     </>
