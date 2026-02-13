@@ -8,14 +8,28 @@ export function Layout() {
   const sidebarWidth = getSidebarWidth(isCollapsed);
 
   return (
-    <>
+    <Box bg="bg.subtle" height="100vh">
       <Sidebar
         isCollapsed={isCollapsed}
         onToggleCollapse={() => setIsCollapsed(!isCollapsed)}
       />
-      <Box as="main" ml={sidebarWidth} p={8} transition="margin-left 0.2s ease">
-        <Outlet />
+      <Box
+        p={2}
+        ml={sidebarWidth}
+        transition="margin-left 0.2s ease"
+        bg="bg.subtle"
+      >
+        <Box
+          as="main"
+          borderRadius={8}
+          border="1px solid"
+          borderColor="border.emphasized"
+          bg="bg.panel"
+          p={8}
+        >
+          <Outlet />
+        </Box>
       </Box>
-    </>
+    </Box>
   );
 }

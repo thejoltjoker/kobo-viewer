@@ -34,7 +34,7 @@ const Dropzone: React.FC<DropzoneProps> = ({}) => {
   };
   return (
     <FileUpload.Root
-      maxW="xl"
+      width="100%"
       alignItems="stretch"
       maxFiles={1}
       onFileAccept={handleFileAccept}

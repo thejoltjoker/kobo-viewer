@@ -75,3 +75,14 @@ export async function getWordlistWithBookTitles(
       : null,
   }));
 }
+
+/**
+ * Gets the count of words in the wordlist.
+ * 
+ * @param db - The Drizzle database instance
+ * @returns Promise resolving to the number of words in the wordlist
+ */
+export async function getWordlistCount(db: DrizzleDb): Promise<number> {
+  const wordListEntries = await db.query.wordList.findMany();
+  return wordListEntries.length;
+}

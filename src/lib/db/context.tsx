@@ -19,6 +19,7 @@ interface DatabaseContextValue {
   error: Error | null;
   initializeDatabase: (buffer: ArrayBuffer) => Promise<void>;
   clearDatabase: () => Promise<void>;
+  lastUploaded: Date | null;
 }
 
 const DatabaseContext = createContext<DatabaseContextValue | undefined>(
@@ -34,10 +35,15 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [sqlDb, setSqlDb] = useState<Database | null>(null);
+  const [lastUploaded, setLastUploaded] = useState<Date | null>(null);
 
   // Load database from IndexedDB on mount
   useEffect(() => {
     async function loadStoredDatabase() {
+      const lastUploaded = localStorage.getItem("lastUploaded");
+      if (lastUploaded) {
+        setLastUploaded(new Date(lastUploaded));
+      }
       try {
         setIsLoading(true);
         setError(null);
@@ -72,6 +78,8 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
 
       // Save to IndexedDB
       await saveDatabase(buffer);
+      localStorage.setItem("lastUploaded", new Date().toISOString());
+      setLastUploaded(new Date());
 
       // Update state
       setSqlDb(database);
@@ -97,6 +105,8 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
       // Reset state
       setSqlDb(null);
       setDb(null);
+      setLastUploaded(null);
+      localStorage.removeItem("lastUploaded");
     } catch (err) {
       setError(
         err instanceof Error ? err : new Error("Failed to clear database")
@@ -113,6 +123,7 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
     error,
     initializeDatabase,
     clearDatabase,
+    lastUploaded,
   };
 
   return (

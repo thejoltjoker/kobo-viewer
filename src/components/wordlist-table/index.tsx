@@ -1,8 +1,14 @@
 import { useDatabase } from "@/lib/db/hooks";
-import type { WordlistWithBookTitle } from "@/lib/db/types";
 import { getWordlistWithBookTitles } from "@/lib/db/queries";
-import { Button, Portal, Table } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import type { WordlistWithBookTitle } from "@/lib/db/types";
+import { Badge, Button, Portal, Table } from "@chakra-ui/react";
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { useEffect, useMemo, useState } from "react";
 
 import { ActionBar, Checkbox, Kbd } from "@chakra-ui/react";
 import { LuDownload } from "react-icons/lu";
@@ -14,7 +20,88 @@ const WordlistTable = () => {
   const [wordlist, setWordlist] = useState<WordlistWithBookTitle[]>([]);
 
   const hasSelection = selection.length > 0;
-  const indeterminate = hasSelection && selection.length < wordlist.length;
+
+  const columnHelper = useMemo(
+    () => createColumnHelper<WordlistWithBookTitle>(),
+    []
+  );
+
+  const columns = useMemo(
+    () => {
+      const indeterminate = hasSelection && selection.length < wordlist.length;
+      return [
+    columnHelper.display({
+      id: "select",
+      header: () => (
+        <Checkbox.Root
+          size="sm"
+          top="0.5"
+          aria-label="Select all rows"
+          checked={indeterminate ? "indeterminate" : selection.length > 0}
+          onCheckedChange={(changes) => {
+            setSelection(
+              changes.checked ? wordlist.map((item) => item.text) : []
+            );
+          }}
+        >
+          <Checkbox.HiddenInput />
+          <Checkbox.Control />
+        </Checkbox.Root>
+      ),
+      cell: (info) => (
+        <Checkbox.Root
+          size="sm"
+          top="0.5"
+          aria-label="Select row"
+          checked={selection.includes(info.row.original.text)}
+          onCheckedChange={(changes) => {
+            setSelection((prev) =>
+              changes.checked
+                ? [...prev, info.row.original.text]
+                : prev.filter((text) => text !== info.row.original.text)
+            );
+          }}
+        >
+          <Checkbox.HiddenInput />
+          <Checkbox.Control />
+        </Checkbox.Root>
+      ),
+    }),
+    columnHelper.accessor("text", {
+      header: () => "Word",
+      cell: (info) => info.renderValue(),
+      footer: (info) => info.column.id,
+    }),
+    columnHelper.accessor("bookTitle", {
+      id: "bookTitle",
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor("dictSuffix", {
+      id: "dictSuffix",
+      cell: (info) => <Badge>{info.getValue()}</Badge>,
+    }),
+    columnHelper.accessor("dateCreated", {
+      id: "dateCreated",
+      cell: (info) =>
+        info.row.original.dateCreated
+          ? new Date(info.row.original.dateCreated).toLocaleDateString()
+          : "-",
+    }),
+    columnHelper.accessor("volumeId", {
+      id: "volumeId",
+      cell: (info) => info.getValue(),
+    }),
+    ];
+    },
+    [selection, wordlist, columnHelper]
+  );
+
+  const table = useReactTable({
+    columns,
+    data: wordlist,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   useEffect(() => {
     async function fetchWordlist() {
       if (!db) {
@@ -33,70 +120,70 @@ const WordlistTable = () => {
     fetchWordlist();
   }, [db]);
 
-  const rows = wordlist.map((item) => (
+  const rows = table.getRowModel().rows.map((row) => (
     <Table.Row
-      key={item.text}
-      data-selected={selection.includes(item.text) ? "" : undefined}
+      key={row.id}
+      data-selected={selection.includes(row.original.text) ? "" : undefined}
     >
-      <Table.Cell>
-        <Checkbox.Root
-          size="sm"
-          top="0.5"
-          aria-label="Select row"
-          checked={selection.includes(item.text)}
-          onCheckedChange={(changes) => {
-            setSelection((prev) =>
-              changes.checked
-                ? [...prev, item.text]
-                : selection.filter((text) => text !== item.text)
-            );
-          }}
-        >
-          <Checkbox.HiddenInput />
-          <Checkbox.Control />
-        </Checkbox.Root>
-      </Table.Cell>
-      <Table.Cell>{item.text}</Table.Cell>
-      <Table.Cell>{item.bookTitle}</Table.Cell>
-      {/* <Table.Cell>{item.volumeId}</Table.Cell> */}
-      <Table.Cell>{item.dictSuffix}</Table.Cell>
-      <Table.Cell>
-        {item.dateCreated
-          ? new Date(item.dateCreated).toLocaleDateString()
-          : "-"}
-      </Table.Cell>
+      {row.getVisibleCells().map((cell) => (
+        <Table.Cell key={cell.id}>
+          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        </Table.Cell>
+      ))}
     </Table.Row>
   ));
 
   return (
     <>
-      <Table.Root>
-        <Table.Header>
-          <Table.Row>
-            <Table.ColumnHeader w="6">
-              <Checkbox.Root
-                size="sm"
-                top="0.5"
-                aria-label="Select all rows"
-                checked={indeterminate ? "indeterminate" : selection.length > 0}
-                onCheckedChange={(changes) => {
-                  setSelection(
-                    changes.checked ? wordlist.map((item) => item.text) : []
-                  );
-                }}
-              >
-                <Checkbox.HiddenInput />
-                <Checkbox.Control />
-              </Checkbox.Root>
-            </Table.ColumnHeader>
-            <Table.ColumnHeader>Text</Table.ColumnHeader>
-            <Table.ColumnHeader>BookTitle</Table.ColumnHeader>
-            {/* <Table.ColumnHeader>VolumeId</Table.ColumnHeader> */}
-            <Table.ColumnHeader>DictSuffix</Table.ColumnHeader>
-            <Table.ColumnHeader>DateCreated</Table.ColumnHeader>
-          </Table.Row>
+      <Table.Root variant="line">
+        <Table.Header overflow="hidden">
+          {table.getHeaderGroups().map((headerGroup) => (
+            <Table.Row
+              bg="bg.subtle"
+              // borderBottom="none"
+              borderColor="border.emphasized"
+            >
+              {headerGroup.headers.map((header, index) => {
+                const isFirst = index === 0;
+                const isLast = index === headerGroup.headers.length - 1;
+                return (
+                  <Table.ColumnHeader
+                    key={header.id}
+                    borderTopLeftRadius={isFirst ? 5 : 0}
+                    borderTopRightRadius={isLast ? 5 : 0}
+                    borderBottomLeftRadius={isFirst ? 5 : 0}
+                    borderBottomRightRadius={isLast ? 5 : 0}
+                    borderBottom="none"
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </Table.ColumnHeader>
+                );
+              })}
+            </Table.Row>
+          ))}
         </Table.Header>
         <Table.Body>{rows}</Table.Body>
+        {/* <Table.Footer>
+          {table.getFooterGroups().map((footerGroup) => (
+            <Table.Row key={footerGroup.id}>
+              {footerGroup.headers.map((header) => (
+                <Table.Cell key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.footer,
+                        header.getContext()
+                      )}
+                </Table.Cell>
+              ))}
+            </Table.Row>
+          ))}
+        </Table.Footer> */}
       </Table.Root>
 
       <ActionBar.Root open={hasSelection}>
