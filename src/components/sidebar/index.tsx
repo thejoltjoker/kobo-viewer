@@ -24,7 +24,7 @@ import { useDatabase } from "@/lib/db/hooks";
 import { useState, useEffect } from "react";
 import { ClearDatabaseDialog } from "@/components/dialogs/clear-database-dialog";
 import { NavLink } from "react-router";
-import { getWordlistCount } from "@/lib/db/queries";
+import { getBookmarksCount, getWordlistCount } from "@/lib/db/queries";
 
 export interface NavLinkConfig {
   id: string;
@@ -55,20 +55,25 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toggleColorMode, colorMode } = useColorMode();
   const [wordCount, setWordCount] = useState<number | null>(null);
+  const [bookmarkCount, setBookmarkCount] = useState<number | null>(null);
 
   useEffect(() => {
     async function fetchWordCount() {
       if (!db) {
         setWordCount(null);
+        setBookmarkCount(null);
         return;
       }
 
       try {
-        const count = await getWordlistCount(db);
-        setWordCount(count);
+        const wordCountData = await getWordlistCount(db);
+        setWordCount(wordCountData);
+        const bookmarkCountData = await getBookmarksCount(db);
+        setBookmarkCount(bookmarkCountData);
       } catch (err) {
         console.error("Error fetching word count:", err);
         setWordCount(null);
+        setBookmarkCount(null);
       }
     }
 
@@ -149,6 +154,15 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
                             color={isActive ? "white" : "fg.muted"}
                           >
                             {wordCount}
+                          </Badge>
+                        )}
+                        {link.id === "Bookmarks" && bookmarkCount !== null && (
+                          <Badge
+                            colorScheme={isActive ? "white" : "gray"}
+                            bg={isActive ? "whiteAlpha.300" : "bg.emphasized"}
+                            color={isActive ? "white" : "fg.muted"}
+                          >
+                            {bookmarkCount}
                           </Badge>
                         )}
                       </HStack>

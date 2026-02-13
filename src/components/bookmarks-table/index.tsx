@@ -1,7 +1,7 @@
 import { useDatabase } from "@/lib/db/hooks";
-import { getWordlistWithBookTitles } from "@/lib/db/queries";
-import type { WordlistWithBookTitle } from "@/lib/db/types";
-import { Badge, Button, Code, Portal, Table } from "@chakra-ui/react";
+import { getBookmarks, getBookmarksWithBookTitles } from "@/lib/db/queries";
+import type { Bookmark, BookmarkWithBookTitle } from "@/lib/db/types";
+import { Button, Code, Portal, Table } from "@chakra-ui/react";
 import {
   createColumnHelper,
   flexRender,
@@ -14,20 +14,20 @@ import { ActionBar, Checkbox, Kbd } from "@chakra-ui/react";
 import { LuDownload } from "react-icons/lu";
 export interface WordlistProps {}
 
-const WordlistTable = () => {
+const BookmarksTable = () => {
   const [selection, setSelection] = useState<string[]>([]);
   const { db } = useDatabase();
-  const [wordlist, setWordlist] = useState<WordlistWithBookTitle[]>([]);
+  const [bookmarks, setBookmarks] = useState<BookmarkWithBookTitle[]>([]);
 
   const hasSelection = selection.length > 0;
 
   const columnHelper = useMemo(
-    () => createColumnHelper<WordlistWithBookTitle>(),
+    () => createColumnHelper<BookmarkWithBookTitle>(),
     []
   );
 
   const columns = useMemo(() => {
-    const indeterminate = hasSelection && selection.length < wordlist.length;
+    const indeterminate = hasSelection && selection.length < bookmarks.length;
     return [
       columnHelper.display({
         id: "select",
@@ -39,7 +39,7 @@ const WordlistTable = () => {
             checked={indeterminate ? "indeterminate" : selection.length > 0}
             onCheckedChange={(changes) => {
               setSelection(
-                changes.checked ? wordlist.map((item) => item.text) : []
+                changes.checked ? bookmarks.map((item) => item.bookmarkId) : []
               );
             }}
           >
@@ -52,12 +52,15 @@ const WordlistTable = () => {
             size="sm"
             top="0.5"
             aria-label="Select row"
-            checked={selection.includes(info.row.original.text)}
+            checked={selection.includes(info.row.original.bookmarkId)}
             onCheckedChange={(changes) => {
               setSelection((prev) =>
                 changes.checked
-                  ? [...prev, info.row.original.text]
-                  : prev.filter((text) => text !== info.row.original.text)
+                  ? [...prev, info.row.original.bookmarkId]
+                  : prev.filter(
+                      (bookmarkId) =>
+                        bookmarkId !== info.row.original.bookmarkId
+                    )
               );
             }}
           >
@@ -67,52 +70,57 @@ const WordlistTable = () => {
         ),
       }),
       columnHelper.accessor("text", {
-        header: () => "Word",
+        header: () => "Text",
         cell: (info) => info.renderValue(),
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("bookTitle", {
         id: "bookTitle",
-        header: () => <span className="no-wrap">Book Title</span>,
+        header: () => "Book Title",
         cell: (info) => info.getValue(),
       }),
-      columnHelper.accessor("dictSuffix", {
-        id: "dictSuffix",
-        header: () => <span className="no-wrap">Dict Suffix</span>,
-        cell: (info) => <Badge colorPalette="purple">{info.getValue()}</Badge>,
+      columnHelper.accessor("annotation", {
+        id: "annotation",
+        header: () => "Annotation",
+        cell: (info) => info.renderValue(),
+      }),
+      columnHelper.accessor("contextString", {
+        id: "contextString",
+        header: () => "Context String",
+        cell: (info) => info.renderValue(),
+      }),
+      columnHelper.accessor("type", {
+        id: "type",
+        header: () => "Type",
+        cell: (info) => info.renderValue(),
       }),
       columnHelper.accessor("dateCreated", {
         id: "dateCreated",
-        header: () => <span className="no-wrap">Date Created</span>,
+        header: () => "Date Created",
         cell: (info) =>
           info.row.original.dateCreated
             ? new Date(info.row.original.dateCreated).toLocaleDateString()
             : "-",
       }),
-      columnHelper.accessor("volumeId", {
-        id: "volumeId",
-        header: () => "Volume ID",
-        cell: (info) => <Code>{info.getValue()}</Code>,
-      }),
     ];
-  }, [selection, wordlist, columnHelper]);
+  }, [selection, bookmarks, columnHelper]);
 
   const table = useReactTable({
     columns,
-    data: wordlist,
+    data: bookmarks,
     getCoreRowModel: getCoreRowModel(),
   });
 
   useEffect(() => {
     async function fetchWordlist() {
       if (!db) {
-        setWordlist([]);
+        setBookmarks(bookmarks);
         return;
       }
 
       try {
-        const wordlist = await getWordlistWithBookTitles(db);
-        setWordlist(wordlist);
+        const bookmarksData = await getBookmarksWithBookTitles(db);
+        setBookmarks(bookmarksData);
       } catch (err) {
         console.error("Error fetching wordlist:", err);
       }
@@ -124,7 +132,9 @@ const WordlistTable = () => {
   const rows = table.getRowModel().rows.map((row) => (
     <Table.Row
       key={row.id}
-      data-selected={selection.includes(row.original.text) ? "" : undefined}
+      data-selected={
+        selection.includes(row.original.bookmarkId) ? "" : undefined
+      }
     >
       {row.getVisibleCells().map((cell) => (
         <Table.Cell key={cell.id}>
@@ -140,7 +150,8 @@ const WordlistTable = () => {
         <Table.Header overflow="hidden">
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row
-              bg="bg.subtle"
+              key={headerGroup.id}
+              bg="bg.muted"
               // borderBottom="none"
               borderColor="border.emphasized"
             >
@@ -169,22 +180,6 @@ const WordlistTable = () => {
           ))}
         </Table.Header>
         <Table.Body>{rows}</Table.Body>
-        {/* <Table.Footer>
-          {table.getFooterGroups().map((footerGroup) => (
-            <Table.Row key={footerGroup.id}>
-              {footerGroup.headers.map((header) => (
-                <Table.Cell key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.footer,
-                        header.getContext()
-                      )}
-                </Table.Cell>
-              ))}
-            </Table.Row>
-          ))}
-        </Table.Footer> */}
       </Table.Root>
 
       <ActionBar.Root open={hasSelection}>
@@ -210,4 +205,4 @@ const WordlistTable = () => {
     </>
   );
 };
-export default WordlistTable;
+export default BookmarksTable;

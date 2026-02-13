@@ -1,4 +1,5 @@
 import { Heading, Text } from "@chakra-ui/react";
+import BookmarksTable from "@/components/bookmarks-table";
 
 export function BookmarksPage() {
   return (
@@ -9,7 +10,7 @@ export function BookmarksPage() {
       <Text mb={6} color="fg.muted">
         View your book bookmarks and annotations.
       </Text>
-      <Text color="fg.muted">Bookmarks feature coming soon...</Text>
+      <BookmarksTable />
     </>
   );
 }

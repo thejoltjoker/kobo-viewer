@@ -23,7 +23,7 @@ export function Layout() {
           as="main"
           borderRadius={8}
           border="1px solid"
-          borderColor="border.emphasized"
+          borderColor="border.muted"
           bg="bg.panel"
           p={8}
         >
