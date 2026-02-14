@@ -12,11 +12,13 @@ import type {
   CoverKey,
 } from "./types";
 
-const OPENLIBRARY_API_BASE = "https://openlibrary.org";
-const OPENLIBRARY_COVERS_BASE = "https://covers.openlibrary.org";
+export const OPENLIBRARY_API_BASE = "https://openlibrary.org";
+export const OPENLIBRARY_COVERS_BASE = "https://covers.openlibrary.org";
+export const GOODREADS_BOOK_BASE = "https://www.goodreads.com/book/show";
+export const GOODREADS_SEARCH_BASE = "https://www.goodreads.com/search";
 
-const defaultRequestHeaders: HeadersInit = {
-  "User-Agent": "Kobo-Viewer (openlibrary@archive.org)",
+export const defaultRequestHeaders: HeadersInit = {
+  "User-Agent": "Kobo-Companion (openlibrary@archive.org)",
   Accept: "application/json",
 };
 
@@ -87,9 +89,6 @@ export const getByIsbn = async (isbn: string): Promise<OpenLibraryEdition> => {
   return get<OpenLibraryEdition>(`/isbn/${encodeURIComponent(isbn)}.json`);
 };
 
-const GOODREADS_BOOK_BASE = "https://www.goodreads.com/book/show";
-const GOODREADS_SEARCH_BASE = "https://www.goodreads.com/search";
-
 export const getGoodreadsUrlByWorkKey = async (
   workKey: string
 ): Promise<string | null> => {
@@ -126,7 +125,6 @@ export const getAuthorPhotoUrl = async (
   return `${OPENLIBRARY_COVERS_BASE}/a/olid/${normalizedAuthorOlid}-${size}.jpg`;
 };
 
-export { OPENLIBRARY_API_BASE as OPENLIBRARY_BASE, OPENLIBRARY_COVERS_BASE };
 export type {
   OpenLibrarySearchParams,
   OpenLibrarySearchResponse,

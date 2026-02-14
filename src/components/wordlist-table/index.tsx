@@ -1,3 +1,8 @@
+// TODO Export selected as csv
+// TODO filter by words (input)
+// TODO filter by book title
+// TODO filter by dict suffix (input chips)
+
 import { useDatabase } from "@/lib/db/hooks";
 import { getWordlistWithBookTitles } from "@/lib/db/queries";
 import type { WordlistWithBookMeta } from "@/lib/db/types";
@@ -5,17 +10,17 @@ import {
   ButtonGroup,
   createListCollection,
   DownloadTrigger,
+  Field,
+  FieldLabel,
   Input,
   InputGroup,
   Select,
-  Tabs,
+  Separator,
 } from "@chakra-ui/react";
 import {
   LuArrowDown,
   LuArrowUp,
   LuChevronLeft,
-  LuLayoutGrid,
-  LuList,
   LuSearch,
 } from "react-icons/lu";
 
@@ -32,6 +37,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+import { useQuery } from "@tanstack/react-query";
 import type { PaginationState, SortingState } from "@tanstack/react-table";
 import {
   createColumnHelper,
@@ -47,6 +53,7 @@ import { toaster } from "@/components/ui/toaster";
 import WordDefinitionDrawer from "@/components/word-definition-drawer";
 import { ActionBar, Checkbox, Pagination } from "@chakra-ui/react";
 import { LuChevronRight, LuCopy, LuDownload } from "react-icons/lu";
+import { getDictSuffix, type DictSuffix } from "@/lib/utils/dictSuffixes";
 export interface WordlistProps {}
 
 const WordlistTable = () => {
@@ -59,12 +66,41 @@ const WordlistTable = () => {
     pageSize: 10,
   });
   const { db } = useDatabase();
-  const [wordlist, setWordlist] = useState<WordlistWithBookMeta[]>([]);
+  const { data: wordlist = [] } = useQuery({
+    queryKey: ["wordlist"],
+    queryFn: () => getWordlistWithBookTitles(db!),
+    enabled: !!db,
+  });
   const [columnVisibility, setColumnVisibility] = useState<
     Record<string, boolean>
   >({});
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerWord, setDrawerWord] = useState<string | null>(null);
+  const [dictSuffixes, setDictSuffixes] = useState<DictSuffix[]>([]);
+  const [selectedDictSuffixes, setSelectedDictSuffixes] = useState<string[]>(
+    []
+  );
+
+  useEffect(() => {
+    const suffixes = wordlist
+      .map((item) => item.dictSuffix)
+      .filter((item): item is string => item != null && item !== "");
+    setDictSuffixes(
+      Array.from(new Set(suffixes))
+        .map((suffix) =>
+          getDictSuffix(suffix.startsWith("-") ? suffix.slice(1) : suffix)
+        )
+        .filter((item): item is DictSuffix => item !== undefined)
+    );
+  }, [wordlist]);
+
+  const filteredWordlist = useMemo(() => {
+    if (selectedDictSuffixes.length === 0) return wordlist;
+    return wordlist.filter((row) => {
+      const suffix = row.dictSuffix?.replace(/^-/, "") ?? "";
+      return selectedDictSuffixes.includes(suffix);
+    });
+  }, [wordlist, selectedDictSuffixes]);
 
   const handleCopy = async (text: string) => {
     try {
@@ -89,6 +125,7 @@ const WordlistTable = () => {
   };
 
   const hasSelection = selection.length > 0;
+  const selectableWordlist = filteredWordlist;
 
   const columnHelper = useMemo(
     () => createColumnHelper<WordlistWithBookMeta>(),
@@ -96,7 +133,8 @@ const WordlistTable = () => {
   );
 
   const columns = useMemo(() => {
-    const indeterminate = hasSelection && selection.length < wordlist.length;
+    const indeterminate =
+      hasSelection && selection.length < selectableWordlist.length;
     return [
       columnHelper.display({
         id: "select",
@@ -109,7 +147,9 @@ const WordlistTable = () => {
             checked={indeterminate ? "indeterminate" : selection.length > 0}
             onCheckedChange={(changes) => {
               setSelection(
-                changes.checked ? wordlist.map((item) => item.text) : []
+                changes.checked
+                  ? selectableWordlist.map((item) => item.text)
+                  : []
               );
             }}
           >
@@ -203,12 +243,7 @@ const WordlistTable = () => {
         cell: (info) => {
           const author = info.getValue();
           return (
-            <Box
-              maxW="180px"
-              overflow="hidden"
-              textOverflow="ellipsis"
-              whiteSpace="nowrap"
-            >
+            <Box overflow="hidden" textOverflow="ellipsis" whiteSpace="nowrap">
               {author ?? "-"}
             </Box>
           );
@@ -216,9 +251,22 @@ const WordlistTable = () => {
       }),
       columnHelper.accessor("dictSuffix", {
         id: "dictSuffix",
-        header: () => <span className="no-wrap">Dict Suffix</span>,
+        header: () => <span className="no-wrap">Dictionary</span>,
         enableSorting: true,
-        cell: (info) => <Badge colorPalette="purple">{info.getValue()}</Badge>,
+        cell: (info) => (
+          <Badge
+            colorPalette={
+              getDictSuffix(info.getValue()?.replace(/^[-]/, "") ?? "")
+                ?.badgeColor
+            }
+            textTransform="capitalize"
+          >
+            {
+              getDictSuffix(info.getValue()?.replace(/^[-]/, "") ?? "")
+                ?.language
+            }
+          </Badge>
+        ),
       }),
       columnHelper.accessor("dateCreated", {
         id: "dateCreated",
@@ -271,11 +319,11 @@ const WordlistTable = () => {
         },
       }),
     ];
-  }, [selection, wordlist, columnHelper]);
+  }, [selection, selectableWordlist, columnHelper]);
 
   const table = useReactTable({
     columns,
-    data: wordlist,
+    data: filteredWordlist,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -288,6 +336,7 @@ const WordlistTable = () => {
     onSortingChange: setSorting,
     onPaginationChange: setPagination,
     enableSorting: true,
+    autoResetPageIndex: false,
   });
 
   const columnOptions = useMemo(() => {
@@ -316,6 +365,19 @@ const WordlistTable = () => {
     [columnOptions]
   );
 
+  const dictSuffixOptions = useMemo(
+    () =>
+      dictSuffixes.map((s) => ({
+        label: `${s.emoji} ${s.language}`,
+        value: s.locale,
+      })),
+    [dictSuffixes]
+  );
+  const dictSuffixCollection = useMemo(
+    () => createListCollection({ items: dictSuffixOptions }),
+    [dictSuffixOptions]
+  );
+
   const pageSizeOptions = useMemo(
     () =>
       [10, 20, 50, 100].map((size) => ({
@@ -336,24 +398,6 @@ const WordlistTable = () => {
       .map((column) => column.id);
   }, [table, columnVisibility]);
 
-  useEffect(() => {
-    async function fetchWordlist() {
-      if (!db) {
-        setWordlist([]);
-        return;
-      }
-
-      try {
-        const wordlist = await getWordlistWithBookTitles(db);
-        setWordlist(wordlist);
-      } catch (err) {
-        console.error("Error fetching wordlist:", err);
-      }
-    }
-
-    fetchWordlist();
-  }, [db]);
-
   const rows = table.getRowModel().rows.map((row) => (
     <Table.Row
       key={row.id}
@@ -368,20 +412,71 @@ const WordlistTable = () => {
   ));
 
   return (
-    <VStack>
+    <VStack gap="2">
       <WordDefinitionDrawer
         word={drawerWord ?? ""}
         open={drawerOpen}
         onOpenChange={setDrawerOpen}
       />
-      <HStack width="100%" justify="space-between">
-        <HStack>
-          <InputGroup flex="1" startElement={<LuSearch />} maxW="500px">
-            <Input placeholder="Search words" />
-          </InputGroup>
+      <HStack id="controls" width="100%" justify="space-between">
+        <HStack flex="1" id="filter-controls">
+          <Box flexBasis="300px">
+            <Field.Root>
+              <Field.Label>Filter words</Field.Label>
+              <InputGroup flex="1" startElement={<LuSearch />}>
+                <Input placeholder="Search words" size="sm" />
+              </InputGroup>
+            </Field.Root>
+          </Box>
+          <Box>
+            <Select.Root
+              multiple
+              collection={dictSuffixCollection}
+              value={selectedDictSuffixes}
+              onValueChange={(details) => {
+                const value = details.value;
+                const selected = Array.isArray(value)
+                  ? value
+                  : value
+                  ? [value]
+                  : [];
+                setSelectedDictSuffixes(selected);
+                table.setPageIndex(0);
+              }}
+              size="sm"
+              minWidth="10rem"
+            >
+              <Select.Label>Dictionaries</Select.Label>
+              <Select.HiddenSelect />
+              <Select.Control>
+                <Select.Trigger>
+                  <Select.ValueText placeholder="Filter by dict" />
+                </Select.Trigger>
+                <Select.IndicatorGroup>
+                  <Select.Indicator />
+                </Select.IndicatorGroup>
+              </Select.Control>
+              <Portal>
+                <Select.Positioner>
+                  <Select.Content>
+                    {dictSuffixOptions.map((option) => (
+                      <Select.Item
+                        item={option.value}
+                        key={option.value}
+                        textWrap="nowrap"
+                      >
+                        {option.label}
+                        <Select.ItemIndicator />
+                      </Select.Item>
+                    ))}
+                  </Select.Content>
+                </Select.Positioner>
+              </Portal>
+            </Select.Root>
+          </Box>
         </HStack>
 
-        <HStack>
+        <HStack flex="1" id="table-controls" justify="flex-end">
           <Select.Root
             multiple
             collection={columnCollection}
@@ -396,7 +491,6 @@ const WordlistTable = () => {
                 .getAllColumns()
                 .filter((column) => column.id !== "select")
                 .map((column) => column.id);
-
               // Update visibility: show selected columns, hide unselected ones
               const newVisibility: Record<string, boolean> = {};
               allColumnIds.forEach((id) => {
@@ -407,8 +501,8 @@ const WordlistTable = () => {
             size="sm"
             width="160px"
           >
+            <Select.Label>Columns</Select.Label>
             <Select.HiddenSelect />
-            {/* <Select.Label>Select columns</Select.Label> */}
             <Select.Control>
               <Select.Trigger>
                 <Select.ValueText placeholder="Select columns" />
@@ -430,23 +524,6 @@ const WordlistTable = () => {
               </Select.Positioner>
             </Portal>
           </Select.Root>
-
-          <Tabs.Root defaultValue="table" variant="plain" size="sm">
-            <Tabs.List bg="bg.muted" rounded="l3" p="1">
-              <Tabs.Trigger value="table">
-                <LuList />
-              </Tabs.Trigger>
-              <Tabs.Trigger value="grid">
-                <LuLayoutGrid />
-              </Tabs.Trigger>
-              <Tabs.Indicator rounded="l2" />
-            </Tabs.List>
-            {/* <Tabs.Content value="members">Manage your team members</Tabs.Content>
-            <Tabs.Content value="projects">Manage your projects</Tabs.Content>
-            <Tabs.Content value="tasks">
-              Manage your tasks for freelancers
-            </Tabs.Content> */}
-          </Tabs.Root>
         </HStack>
       </HStack>
 
@@ -619,7 +696,7 @@ const WordlistTable = () => {
               </ActionBar.SelectionTrigger>
               <ActionBar.Separator />
               {/* <DownloadTrigger
-                data={wordlist.map((item) => ({
+                data={filteredWordlist.map((item) => ({
                   text: item.text,
                   bookTitle: item.bookTitle,
                   dictSuffix: item.dictSuffix,
@@ -635,7 +712,7 @@ const WordlistTable = () => {
                 </Button>
               </DownloadTrigger> */}
               <DownloadTrigger
-                data={JSON.stringify(wordlist)}
+                data={JSON.stringify(filteredWordlist)}
                 fileName="wordlist.json"
                 mimeType="application/json"
                 asChild
