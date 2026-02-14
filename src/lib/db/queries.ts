@@ -6,11 +6,11 @@ import type {
 } from "./types";
 
 export async function getWordlistWithBookTitles(
-  db: DrizzleDb
+  db: DrizzleDb,
 ): Promise<WordlistWithBookMeta[]> {
   const wordListEntries = await db.query.wordList.findMany();
   const volumeIds = [
-    ...new Set(wordListEntries.map((entry) => entry.volumeId).filter(Boolean)),
+    ...new Set(wordListEntries.map(entry => entry.volumeId).filter(Boolean)),
   ];
   const bookMetaMap = new Map<
     string,
@@ -21,8 +21,8 @@ export async function getWordlistWithBookTitles(
     const contentEntry = await db.query.content.findFirst({
       where: { contentId: volumeId ?? undefined },
     });
-    const fallbackContent =
-      !contentEntry && volumeId
+    const fallbackContent
+      = !contentEntry && volumeId
         ? await db.query.content.findFirst({
             where: { bookId: volumeId },
           })
@@ -64,11 +64,11 @@ export async function getBookmarks(db: DrizzleDb): Promise<Bookmark[]> {
 }
 
 export async function getBookmarksWithBookMeta(
-  db: DrizzleDb
+  db: DrizzleDb,
 ): Promise<BookmarkWithBookMeta[]> {
   const bookmarkEntries = await db.query.bookmark.findMany();
   const volumeIds = [
-    ...new Set(bookmarkEntries.map((entry) => entry.volumeId).filter(Boolean)),
+    ...new Set(bookmarkEntries.map(entry => entry.volumeId).filter(Boolean)),
   ];
   const bookMetaMap = new Map<
     string,

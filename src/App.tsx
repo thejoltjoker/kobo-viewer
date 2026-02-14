@@ -1,10 +1,11 @@
-import { Routes, Route } from "react-router";
-import "./App.css";
-import { DatabaseProvider } from "./lib/db/context";
+import { Route, Routes } from "react-router";
+
+import "./app.css";
 import { Layout } from "./components/layout";
+import { DatabaseProvider } from "./lib/db/context";
+import { BookmarksPage } from "./pages/bookmarks";
 import { OverviewPage } from "./pages/overview";
 import { WordlistPage } from "./pages/wordlist";
-import { BookmarksPage } from "./pages/bookmarks";
 
 function App() {
   return (

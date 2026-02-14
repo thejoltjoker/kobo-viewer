@@ -1,4 +1,5 @@
 import { Heading, Text } from "@chakra-ui/react";
+
 import BookmarksTable from "@/components/bookmarks-table";
 
 export function BookmarksPage() {

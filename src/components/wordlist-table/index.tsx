@@ -1,44 +1,31 @@
 // TODO Export selected as csv
-// TODO filter by words (input)
 // TODO filter by book title
 // TODO filter by dict suffix (input chips)
 
-import { useDatabase } from "@/lib/db/hooks";
-import { getWordlistWithBookTitles } from "@/lib/db/queries";
-import type { WordlistWithBookMeta } from "@/lib/db/types";
-import {
-  ButtonGroup,
-  createListCollection,
-  DownloadTrigger,
-  Field,
-  FieldLabel,
-  Input,
-  InputGroup,
-  Select,
-  Separator,
-} from "@chakra-ui/react";
-import {
-  LuArrowDown,
-  LuArrowUp,
-  LuChevronLeft,
-  LuSearch,
-} from "react-icons/lu";
+import type { PaginationState, SortingState } from "@tanstack/react-table";
 
-import { BookHoverCard } from "@/components/book-hover-card";
-import { Tooltip } from "@/components/ui/tooltip";
 import {
+  ActionBar,
   Badge,
   Box,
   Button,
+  ButtonGroup,
+  Checkbox,
+  createListCollection,
+  DownloadTrigger,
+  Field,
   HStack,
   IconButton,
+  Input,
+  InputGroup,
+  Pagination,
   Portal,
+  Select,
   Table,
   Text,
   VStack,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import type { PaginationState, SortingState } from "@tanstack/react-table";
 import {
   createColumnHelper,
   flexRender,
@@ -47,16 +34,31 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import {
+  LuArrowDown,
+  LuArrowUp,
+  LuChevronLeft,
+  LuChevronRight,
+  LuCopy,
+  LuDownload,
+  LuSearch,
+} from "react-icons/lu";
 
-import { toaster } from "@/components/ui/toaster";
+import type { WordlistWithBookMeta } from "@/lib/db/types";
+import type { DictSuffix } from "@/lib/utils/dict-suffixes";
+
+import { BookHoverCard } from "@/components/book-hover-card";
+import { toaster } from "@/components/ui/toaster-instance";
+import { Tooltip } from "@/components/ui/tooltip";
 import WordDefinitionDrawer from "@/components/word-definition-drawer";
-import { ActionBar, Checkbox, Pagination } from "@chakra-ui/react";
-import { LuChevronRight, LuCopy, LuDownload } from "react-icons/lu";
-import { getDictSuffix, type DictSuffix } from "@/lib/utils/dictSuffixes";
+import { useDatabase } from "@/lib/db/hooks";
+import { getWordlistWithBookTitles } from "@/lib/db/queries";
+import { getDictSuffix } from "@/lib/utils/dict-suffixes";
+
 export interface WordlistProps {}
 
-const WordlistTable = () => {
+function WordlistTable() {
   const [selection, setSelection] = useState<string[]>([]);
   const [sorting, setSorting] = useState<SortingState>([
     { id: "dateCreated", desc: true },
@@ -76,31 +78,35 @@ const WordlistTable = () => {
   >({});
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerWord, setDrawerWord] = useState<string | null>(null);
-  const [dictSuffixes, setDictSuffixes] = useState<DictSuffix[]>([]);
-  const [selectedDictSuffixes, setSelectedDictSuffixes] = useState<string[]>(
-    []
-  );
-
-  useEffect(() => {
+  const dictSuffixes = useMemo(() => {
     const suffixes = wordlist
-      .map((item) => item.dictSuffix)
+      .map(item => item.dictSuffix)
       .filter((item): item is string => item != null && item !== "");
-    setDictSuffixes(
-      Array.from(new Set(suffixes))
-        .map((suffix) =>
-          getDictSuffix(suffix.startsWith("-") ? suffix.slice(1) : suffix)
-        )
-        .filter((item): item is DictSuffix => item !== undefined)
-    );
+    return Array.from(new Set(suffixes))
+      .map(suffix =>
+        getDictSuffix(suffix.startsWith("-") ? suffix.slice(1) : suffix),
+      )
+      .filter((item): item is DictSuffix => item !== undefined);
   }, [wordlist]);
+  const [selectedDictSuffixes, setSelectedDictSuffixes] = useState<string[]>(
+    [],
+  );
+  const [wordFilter, setWordFilter] = useState("");
 
   const filteredWordlist = useMemo(() => {
-    if (selectedDictSuffixes.length === 0) return wordlist;
-    return wordlist.filter((row) => {
-      const suffix = row.dictSuffix?.replace(/^-/, "") ?? "";
-      return selectedDictSuffixes.includes(suffix);
-    });
-  }, [wordlist, selectedDictSuffixes]);
+    let result = wordlist;
+    const query = wordFilter.trim().toLowerCase();
+    if (query) {
+      result = result.filter(row => row.text.toLowerCase().includes(query));
+    }
+    if (selectedDictSuffixes.length > 0) {
+      result = result.filter((row) => {
+        const suffix = row.dictSuffix?.replace(/^-/, "") ?? "";
+        return selectedDictSuffixes.includes(suffix);
+      });
+    }
+    return result;
+  }, [wordlist, selectedDictSuffixes, wordFilter]);
 
   const handleCopy = async (text: string) => {
     try {
@@ -110,7 +116,8 @@ const WordlistTable = () => {
         description: `"${text}" copied to clipboard`,
         type: "success",
       });
-    } catch (err) {
+    }
+    catch {
       toaster.create({
         title: "Failed to copy",
         description: "Could not copy to clipboard",
@@ -129,12 +136,12 @@ const WordlistTable = () => {
 
   const columnHelper = useMemo(
     () => createColumnHelper<WordlistWithBookMeta>(),
-    []
+    [],
   );
 
   const columns = useMemo(() => {
-    const indeterminate =
-      hasSelection && selection.length < selectableWordlist.length;
+    const indeterminate
+      = hasSelection && selection.length < selectableWordlist.length;
     return [
       columnHelper.display({
         id: "select",
@@ -148,8 +155,8 @@ const WordlistTable = () => {
             onCheckedChange={(changes) => {
               setSelection(
                 changes.checked
-                  ? selectableWordlist.map((item) => item.text)
-                  : []
+                  ? selectableWordlist.map(item => item.text)
+                  : [],
               );
             }}
           >
@@ -157,17 +164,17 @@ const WordlistTable = () => {
             <Checkbox.Control />
           </Checkbox.Root>
         ),
-        cell: (info) => (
+        cell: info => (
           <Checkbox.Root
             size="sm"
             top="0.5"
             aria-label="Select row"
             checked={selection.includes(info.row.original.text)}
             onCheckedChange={(changes) => {
-              setSelection((prev) =>
+              setSelection(prev =>
                 changes.checked
                   ? [...prev, info.row.original.text]
-                  : prev.filter((text) => text !== info.row.original.text)
+                  : prev.filter(text => text !== info.row.original.text),
               );
             }}
           >
@@ -253,16 +260,16 @@ const WordlistTable = () => {
         id: "dictSuffix",
         header: () => <span className="no-wrap">Dictionary</span>,
         enableSorting: true,
-        cell: (info) => (
+        cell: info => (
           <Badge
             colorPalette={
-              getDictSuffix(info.getValue()?.replace(/^[-]/, "") ?? "")
+              getDictSuffix(info.getValue()?.replace(/^-/, "") ?? "")
                 ?.badgeColor
             }
             textTransform="capitalize"
           >
             {
-              getDictSuffix(info.getValue()?.replace(/^[-]/, "") ?? "")
+              getDictSuffix(info.getValue()?.replace(/^-/, "") ?? "")
                 ?.language
             }
           </Badge>
@@ -279,7 +286,7 @@ const WordlistTable = () => {
           const timeB = b ? new Date(b).getTime() : 0;
           return timeA - timeB;
         },
-        cell: (info) =>
+        cell: info =>
           info.row.original.dateCreated
             ? new Date(info.row.original.dateCreated).toLocaleDateString()
             : "-",
@@ -319,7 +326,7 @@ const WordlistTable = () => {
         },
       }),
     ];
-  }, [selection, selectableWordlist, columnHelper]);
+  }, [selection, selectableWordlist, columnHelper, hasSelection]);
 
   const table = useReactTable({
     columns,
@@ -342,68 +349,68 @@ const WordlistTable = () => {
   const columnOptions = useMemo(() => {
     return table
       .getAllColumns()
-      .filter((column) => column.id !== "select")
-      .map((column) => ({
+      .filter(column => column.id !== "select")
+      .map(column => ({
         label:
           column.id === "text"
             ? "Word"
             : column.id === "bookTitle"
-            ? "Book Title"
-            : column.id === "bookAuthor"
-            ? "Author"
-            : column.id === "dictSuffix"
-            ? "Dict Suffix"
-            : column.id === "dateCreated"
-            ? "Date Created"
-            : column.id,
+              ? "Book Title"
+              : column.id === "bookAuthor"
+                ? "Author"
+                : column.id === "dictSuffix"
+                  ? "Dict Suffix"
+                  : column.id === "dateCreated"
+                    ? "Date Created"
+                    : column.id,
         value: column.id,
       }));
   }, [table]);
 
   const columnCollection = useMemo(
     () => createListCollection({ items: columnOptions }),
-    [columnOptions]
+    [columnOptions],
   );
 
   const dictSuffixOptions = useMemo(
     () =>
-      dictSuffixes.map((s) => ({
+      dictSuffixes.map(s => ({
         label: `${s.emoji} ${s.language}`,
         value: s.locale,
       })),
-    [dictSuffixes]
+    [dictSuffixes],
   );
   const dictSuffixCollection = useMemo(
     () => createListCollection({ items: dictSuffixOptions }),
-    [dictSuffixOptions]
+    [dictSuffixOptions],
   );
 
   const pageSizeOptions = useMemo(
     () =>
-      [10, 20, 50, 100].map((size) => ({
+      [10, 20, 50, 100].map(size => ({
         label: `${size} per page`,
         value: String(size),
       })),
-    []
+    [],
   );
   const pageSizeCollection = useMemo(
     () => createListCollection({ items: pageSizeOptions }),
-    [pageSizeOptions]
+    [pageSizeOptions],
   );
 
   const visibleColumnIds = useMemo(() => {
     return table
       .getAllColumns()
-      .filter((column) => column.id !== "select" && column.getIsVisible())
-      .map((column) => column.id);
-  }, [table, columnVisibility]);
+      .filter(column => column.id !== "select" && column.getIsVisible())
+      .map(column => column.id);
+  }, [table]);
 
-  const rows = table.getRowModel().rows.map((row) => (
+  const rows = table.getRowModel().rows.map(row => (
     <Table.Row
       key={row.id}
       data-selected={selection.includes(row.original.text) ? "" : undefined}
     >
-      {row.getVisibleCells().map((cell) => (
+      {row.getVisibleCells().map(cell => (
         <Table.Cell key={cell.id}>
           {flexRender(cell.column.columnDef.cell, cell.getContext())}
         </Table.Cell>
@@ -424,7 +431,15 @@ const WordlistTable = () => {
             <Field.Root>
               <Field.Label>Filter words</Field.Label>
               <InputGroup flex="1" startElement={<LuSearch />}>
-                <Input placeholder="Search words" size="sm" />
+                <Input
+                  placeholder="Search words"
+                  size="sm"
+                  value={wordFilter}
+                  onChange={(e) => {
+                    setWordFilter(e.target.value);
+                    table.setPageIndex(0);
+                  }}
+                />
               </InputGroup>
             </Field.Root>
           </Box>
@@ -438,8 +453,8 @@ const WordlistTable = () => {
                 const selected = Array.isArray(value)
                   ? value
                   : value
-                  ? [value]
-                  : [];
+                    ? [value]
+                    : [];
                 setSelectedDictSuffixes(selected);
                 table.setPageIndex(0);
               }}
@@ -459,7 +474,7 @@ const WordlistTable = () => {
               <Portal>
                 <Select.Positioner>
                   <Select.Content>
-                    {dictSuffixOptions.map((option) => (
+                    {dictSuffixOptions.map(option => (
                       <Select.Item
                         item={option.value}
                         key={option.value}
@@ -485,12 +500,12 @@ const WordlistTable = () => {
               const selectedIds = Array.isArray(details.value)
                 ? details.value
                 : details.value
-                ? [details.value]
-                : [];
+                  ? [details.value]
+                  : [];
               const allColumnIds = table
                 .getAllColumns()
-                .filter((column) => column.id !== "select")
-                .map((column) => column.id);
+                .filter(column => column.id !== "select")
+                .map(column => column.id);
               // Update visibility: show selected columns, hide unselected ones
               const newVisibility: Record<string, boolean> = {};
               allColumnIds.forEach((id) => {
@@ -514,7 +529,7 @@ const WordlistTable = () => {
             <Portal>
               <Select.Positioner>
                 <Select.Content>
-                  {columnOptions.map((option) => (
+                  {columnOptions.map(option => (
                     <Select.Item item={option.value} key={option.value}>
                       {option.label}
                       <Select.ItemIndicator />
@@ -529,15 +544,13 @@ const WordlistTable = () => {
 
       <Table.Root variant="line">
         <Table.Header overflow="hidden">
-          {table.getHeaderGroups().map((headerGroup) => (
+          {table.getHeaderGroups().map(headerGroup => (
             <Table.Row
               key={headerGroup.id}
               bg="bg.muted"
               borderColor="border.emphasized"
             >
               {headerGroup.headers.map((header, index) => {
-                {
-                }
                 const isFirst = index === 0;
                 const isLast = index === headerGroup.headers.length - 1;
                 const canSort = header.column.getCanSort();
@@ -551,50 +564,52 @@ const WordlistTable = () => {
                     borderBottomRightRadius={isLast ? 5 : 0}
                     borderBottom="none"
                   >
-                    {canSort && toggleSorting ? (
-                      <button
-                        type="button"
-                        onClick={toggleSorting}
-                        title={
-                          header.column.getNextSortingOrder() === "asc"
-                            ? "Sort ascending"
-                            : header.column.getNextSortingOrder() === "desc"
-                            ? "Sort descending"
-                            : "Clear sort"
-                        }
-                        style={{
-                          cursor: "pointer",
-                          userSelect: "none",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "4px",
-                          background: "transparent",
-                          border: "none",
-                          padding: 0,
-                          font: "inherit",
-                        }}
-                      >
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                        {{
-                          asc: <LuArrowUp />,
-                          desc: <LuArrowDown />,
-                        }[header.column.getIsSorted() as string] ?? null}
-                      </button>
-                    ) : (
-                      <>
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                      </>
-                    )}
+                    {canSort && toggleSorting
+                      ? (
+                          <button
+                            type="button"
+                            onClick={toggleSorting}
+                            title={
+                              header.column.getNextSortingOrder() === "asc"
+                                ? "Sort ascending"
+                                : header.column.getNextSortingOrder() === "desc"
+                                  ? "Sort descending"
+                                  : "Clear sort"
+                            }
+                            style={{
+                              cursor: "pointer",
+                              userSelect: "none",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "4px",
+                              background: "transparent",
+                              border: "none",
+                              padding: 0,
+                              font: "inherit",
+                            }}
+                          >
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext(),
+                                )}
+                            {{
+                              asc: <LuArrowUp />,
+                              desc: <LuArrowDown />,
+                            }[header.column.getIsSorted() as string] ?? null}
+                          </button>
+                        )
+                      : (
+                          <>
+                            {header.isPlaceholder
+                              ? null
+                              : flexRender(
+                                  header.column.columnDef.header,
+                                  header.getContext(),
+                                )}
+                          </>
+                        )}
                   </Table.ColumnHeader>
                 );
               })}
@@ -618,9 +633,10 @@ const WordlistTable = () => {
             value={[String(pagination.pageSize)]}
             onValueChange={(details) => {
               const size = Number(
-                Array.isArray(details.value) ? details.value[0] : details.value
+                Array.isArray(details.value) ? details.value[0] : details.value,
               );
-              if (Number.isFinite(size)) table.setPageSize(size);
+              if (Number.isFinite(size))
+                table.setPageSize(size);
             }}
             size="sm"
             width="32"
@@ -637,9 +653,11 @@ const WordlistTable = () => {
             <Portal>
               <Select.Positioner>
                 <Select.Content>
-                  {[10, 20, 50, 100].map((size) => (
+                  {[10, 20, 50, 100].map(size => (
                     <Select.Item item={String(size)} key={size}>
-                      {size} per page
+                      {size}
+                      {" "}
+                      per page
                     </Select.Item>
                   ))}
                 </Select.Content>
@@ -650,8 +668,8 @@ const WordlistTable = () => {
             count={table.getRowCount()}
             page={pagination.pageIndex + 1}
             pageSize={pagination.pageSize}
-            onPageChange={(details) => table.setPageIndex(details.page - 1)}
-            onPageSizeChange={(details) => table.setPageSize(details.pageSize)}
+            onPageChange={details => table.setPageIndex(details.page - 1)}
+            onPageSizeChange={details => table.setPageSize(details.pageSize)}
             siblingCount={1}
           >
             <HStack gap="2" align="center">
@@ -692,25 +710,11 @@ const WordlistTable = () => {
           <ActionBar.Positioner>
             <ActionBar.Content>
               <ActionBar.SelectionTrigger>
-                {selection.length} selected
+                {selection.length}
+                {" "}
+                selected
               </ActionBar.SelectionTrigger>
               <ActionBar.Separator />
-              {/* <DownloadTrigger
-                data={filteredWordlist.map((item) => ({
-                  text: item.text,
-                  bookTitle: item.bookTitle,
-                  dictSuffix: item.dictSuffix,
-                  dateCreated: item.dateCreated,
-                }))}
-                fileName="wordlist.csv"
-                mimeType="text/csv"
-                asChild
-              >
-                <Button variant="outline" size="sm">
-                  <LuDownload />
-                  CSV <Kbd>C</Kbd>
-                </Button>
-              </DownloadTrigger> */}
               <DownloadTrigger
                 data={JSON.stringify(filteredWordlist)}
                 fileName="wordlist.json"
@@ -728,5 +732,5 @@ const WordlistTable = () => {
       </ActionBar.Root>
     </VStack>
   );
-};
+}
 export default WordlistTable;

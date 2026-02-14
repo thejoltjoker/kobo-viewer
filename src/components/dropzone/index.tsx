@@ -1,34 +1,30 @@
 import { Box, FileUpload, Icon } from "@chakra-ui/react";
+import * as React from "react";
 import { LuUpload } from "react-icons/lu";
-import React from "react";
+
 import { useDatabase } from "@/lib/db/hooks";
 
 export interface DropzoneProps {}
 
-const Dropzone: React.FC<DropzoneProps> = ({}) => {
+const Dropzone: React.FC<DropzoneProps> = () => {
   const { initializeDatabase, db } = useDatabase();
 
   const handleFileAccept = async (details: { files: File[] }) => {
-    console.log("File accepted:", details);
     const files = details.files;
-    console.log("Files array length:", files.length);
     const file = files[0];
-    console.log("First file:", file);
     if (file) {
       try {
-        console.log("Processing file:", file.name, "size:", file.size);
         const buffer = await file.arrayBuffer();
-        console.log("Buffer created, size:", buffer.byteLength);
         await initializeDatabase(buffer);
-        console.log("Database initialized");
         if (db) {
-          const res = await db.query.wordList.findMany();
-          console.log("Query result:", res);
+          await db.query.wordList.findMany();
         }
-      } catch (error) {
+      }
+      catch (error) {
         console.error("Error processing file:", error);
       }
-    } else {
+    }
+    else {
       console.warn("No file found in files array");
     }
   };

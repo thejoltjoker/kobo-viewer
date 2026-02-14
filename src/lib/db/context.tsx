@@ -1,17 +1,21 @@
+import type { ReactNode } from "react";
+import type { Database } from "sql.js";
+
 import {
   createContext,
-  useContext,
+  use,
   useEffect,
   useState,
-  type ReactNode,
 } from "react";
-import type { Database } from "sql.js";
-import { createDrizzleDb, initDatabase, type DrizzleDb } from "./index";
+
+import type { DrizzleDb } from "./index";
+
+import { createDrizzleDb, initDatabase } from "./index";
 import {
+  clearDatabase as clearIndexedDb,
   loadDatabase,
   saveDatabase,
-  clearDatabase as clearIndexedDb,
-} from "./indexedDb";
+} from "./indexed-db";
 
 interface DatabaseContextValue {
   db: DrizzleDb | null;
@@ -23,7 +27,7 @@ interface DatabaseContextValue {
 }
 
 const DatabaseContext = createContext<DatabaseContextValue | undefined>(
-  undefined
+  undefined,
 );
 
 interface DatabaseProviderProps {
@@ -34,7 +38,7 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
   const [db, setDb] = useState<DrizzleDb | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
-  const [sqlDb, setSqlDb] = useState<Database | null>(null);
+  const [, setSqlDb] = useState<Database | null>(null);
   const [lastUploaded, setLastUploaded] = useState<Date | null>(null);
 
   // Load database from IndexedDB on mount
@@ -55,11 +59,13 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
           setSqlDb(database);
           setDb(drizzleDb);
         }
-      } catch (err) {
+      }
+      catch (err) {
         setError(
-          err instanceof Error ? err : new Error("Failed to load database")
+          err instanceof Error ? err : new Error("Failed to load database"),
         );
-      } finally {
+      }
+      finally {
         setIsLoading(false);
       }
     }
@@ -84,12 +90,14 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
       // Update state
       setSqlDb(database);
       setDb(drizzleDb);
-    } catch (err) {
+    }
+    catch (err) {
       setError(
-        err instanceof Error ? err : new Error("Failed to initialize database")
+        err instanceof Error ? err : new Error("Failed to initialize database"),
       );
       throw err;
-    } finally {
+    }
+    finally {
       setIsLoading(false);
     }
   };
@@ -107,12 +115,14 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
       setDb(null);
       setLastUploaded(null);
       localStorage.removeItem("lastUploaded");
-    } catch (err) {
+    }
+    catch (err) {
       setError(
-        err instanceof Error ? err : new Error("Failed to clear database")
+        err instanceof Error ? err : new Error("Failed to clear database"),
       );
       throw err;
-    } finally {
+    }
+    finally {
       setIsLoading(false);
     }
   };
@@ -127,17 +137,19 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
   };
 
   return (
-    <DatabaseContext.Provider value={value}>
+    <DatabaseContext value={value}>
       {children}
-    </DatabaseContext.Provider>
+    </DatabaseContext>
   );
 }
 
+// Hook must live here to access DatabaseContext; fast-refresh rule disabled
+// eslint-disable-next-line react-refresh/only-export-components
 export function useDatabaseContext() {
-  const context = useContext(DatabaseContext);
+  const context = use(DatabaseContext);
   if (context === undefined) {
     throw new Error(
-      "useDatabaseContext must be used within a DatabaseProvider"
+      "useDatabaseContext must be used within a DatabaseProvider",
     );
   }
   return context;

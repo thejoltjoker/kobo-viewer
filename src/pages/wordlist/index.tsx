@@ -1,4 +1,5 @@
 import { Heading, Text } from "@chakra-ui/react";
+
 import WordlistTable from "@/components/wordlist-table";
 
 export function WordlistPage() {

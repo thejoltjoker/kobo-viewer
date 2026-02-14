@@ -106,10 +106,10 @@ export const DICT_SUFFIXES = [
   { locale: "sv", language: "svenska", emoji: "🇸🇪", badgeColor: "cyan" },
 ] as const;
 
-export const dictSuffixLocales = DICT_SUFFIXES.map((s) => s.locale);
+export const dictSuffixLocales = DICT_SUFFIXES.map(s => s.locale);
 
-export const getDictSuffix = (suffix: string) => {
-  return DICT_SUFFIXES.find((s) => s.locale === suffix);
-};
+export function getDictSuffix(suffix: string) {
+  return DICT_SUFFIXES.find(s => s.locale === suffix);
+}
 
 export type DictSuffix = (typeof DICT_SUFFIXES)[number];

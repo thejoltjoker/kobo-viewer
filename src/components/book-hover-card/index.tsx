@@ -1,9 +1,4 @@
 import {
-  getGoodreadsSearchUrl,
-  getGoodreadsUrlByWorkKey,
-  searchBooks,
-} from "@/lib/api/openlibrary";
-import {
   Avatar,
   Box,
   HoverCard,
@@ -16,6 +11,12 @@ import {
 import { useQuery } from "@tanstack/react-query";
 import { LuInfo } from "react-icons/lu";
 
+import {
+  getGoodreadsSearchUrl,
+  getGoodreadsUrlByWorkKey,
+  searchBooks,
+} from "@/lib/api/openlibrary";
+
 const COVERS_BASE = "https://covers.openlibrary.org";
 
 export interface BookHoverCardProps {
@@ -23,10 +24,10 @@ export interface BookHoverCardProps {
   bookAuthor?: string | null;
 }
 
-export const BookHoverCard = ({
+export function BookHoverCard({
   bookTitle,
   bookAuthor,
-}: BookHoverCardProps) => {
+}: BookHoverCardProps) {
   const { data: book, isLoading } = useQuery({
     queryKey: ["book", bookTitle, bookAuthor ?? ""],
     queryFn: () =>
@@ -46,15 +47,15 @@ export const BookHoverCard = ({
     enabled: !!workKey,
   });
 
-  const coverUrl =
-    doc?.cover_i != null
+  const coverUrl
+    = doc?.cover_i != null
       ? `${COVERS_BASE}/b/id/${doc.cover_i}-M.jpg`
       : undefined;
   const authors = doc?.author_name?.slice(0, 2).join(", ");
   const year = doc?.first_publish_year;
 
   const goodreadsFallbackUrl = getGoodreadsSearchUrl(
-    [bookTitle, bookAuthor].filter(Boolean).join(" ").trim() || bookTitle
+    [bookTitle, bookAuthor].filter(Boolean).join(" ").trim() || bookTitle,
   );
   const goodreadsLinkUrl = goodreadsUrl ?? goodreadsFallbackUrl;
 
@@ -78,16 +79,18 @@ export const BookHoverCard = ({
                 height="90px"
                 width="60px"
               >
-                {isLoading ? (
-                  <Avatar.Fallback>
-                    <Spinner size="sm" />
-                  </Avatar.Fallback>
-                ) : (
-                  <>
-                    <Avatar.Image src={coverUrl} alt="" />
-                    <Avatar.Fallback name={doc?.title ?? bookTitle} />
-                  </>
-                )}
+                {isLoading
+                  ? (
+                      <Avatar.Fallback>
+                        <Spinner size="sm" />
+                      </Avatar.Fallback>
+                    )
+                  : (
+                      <>
+                        <Avatar.Image src={coverUrl} alt="" />
+                        <Avatar.Fallback name={doc?.title ?? bookTitle} />
+                      </>
+                    )}
               </Avatar.Root>
               <Stack gap="1" minW={0}>
                 <Text textStyle="sm" fontWeight="semibold" lineClamp={2}>
@@ -126,5 +129,5 @@ export const BookHoverCard = ({
       </Portal>
     </HoverCard.Root>
   );
-};
+}
 export default BookHoverCard;

@@ -33,7 +33,7 @@ export const content = sqliteTable(
     isEncrypted: customType({ dataType: () => "BOOL" })("IsEncrypted"),
     dateLastRead: text("DateLastRead"),
     firstTimeReading: customType({ dataType: () => "BOOL" })(
-      "FirstTimeReading"
+      "FirstTimeReading",
     ),
     chapterIdBookmarked: text("ChapterIDBookmarked"),
     paragraphBookmarked: integer("ParagraphBookmarked"),
@@ -50,7 +50,7 @@ export const content = sqliteTable(
     percentRead: integer("___PercentRead"),
     expirationStatus: integer("___ExpirationStatus"),
     favouritesIndex: customType({ dataType: () => "INTEGER" })(
-      "FavouritesIndex"
+      "FavouritesIndex",
     )
       .default("-1")
       .notNull(),
@@ -70,7 +70,7 @@ export const content = sqliteTable(
       .notNull(),
     isbn: text("ISBN"),
     wishlistedDate: text("WishlistedDate").default(
-      sql`"0000-00-00T00:00:00.000"`
+      sql`"0000-00-00T00:00:00.000"`,
     ),
     feedbackTypeSynced: integer("FeedbackTypeSynced").default(0),
     isSocialEnabled: customType({ dataType: () => "BOOL" })("IsSocialEnabled")
@@ -118,7 +118,7 @@ export const content = sqliteTable(
     adobeLoanExpiration: text("AdobeLoanExpiration"),
     hideFromHomePage: customType({ dataType: () => "bit" })("HideFromHomePage"),
     isInternetArchive: customType({ dataType: () => "BOOL" })(
-      "IsInternetArchive"
+      "IsInternetArchive",
     )
       .default("FALSE")
       .notNull(),
@@ -128,28 +128,28 @@ export const content = sqliteTable(
     attributionKana: text(),
     publisherKana: text(),
     isPurchaseable: customType({ dataType: () => "BOOL" })(
-      "IsPurchaseable"
+      "IsPurchaseable",
     ).default("TRUE"),
     isSupported: customType({ dataType: () => "BOOL" })("IsSupported").default(
-      "TRUE"
+      "TRUE",
     ),
     annotationsSyncToken: text("AnnotationsSyncToken"),
     dateModified: text("DateModified").default(sql`"0000-00-00T00:00:00.000"`),
     storePages: integer("StorePages").default(0),
     storeWordCount: integer("StoreWordCount").default(0),
     storeTimeToReadLowerEstimate: integer(
-      "StoreTimeToReadLowerEstimate"
+      "StoreTimeToReadLowerEstimate",
     ).default(0),
     storeTimeToReadUpperEstimate: integer(
-      "StoreTimeToReadUpperEstimate"
+      "StoreTimeToReadUpperEstimate",
     ).default(0),
     duration: integer("Duration").default(0),
     isAbridged: customType({ dataType: () => "BOOL" })("IsAbridged").default(
-      "NULL"
+      "NULL",
     ),
     syncConflictType: integer("SyncConflictType").default(0),
   },
-  (table) => [index("content_bookid_index").on(table.bookId)]
+  table => [index("content_bookid_index").on(table.bookId)],
 );
 
 export const shortcoverPage = sqliteTable(
@@ -159,12 +159,12 @@ export const shortcoverPage = sqliteTable(
     pageNumber: integer("PageNumber"),
     formattedPage: text("FormattedPage"),
   },
-  (table) => [
+  table => [
     primaryKey({
       columns: [table.shortcoverId, table.pageNumber],
       name: "shortcover_page_pk",
     }),
-  ]
+  ],
 );
 
 export const volumeShortcovers = sqliteTable(
@@ -174,13 +174,13 @@ export const volumeShortcovers = sqliteTable(
     shortcoverId: text().notNull(),
     volumeIndex: integer("VolumeIndex"),
   },
-  (table) => [
+  table => [
     index("volume_shortcovers_shortcoverId").on(table.shortcoverId),
     primaryKey({
       columns: [table.volumeId, table.shortcoverId],
       name: "volume_shortcovers_pk",
     }),
-  ]
+  ],
 );
 
 export const contentKeys = sqliteTable(
@@ -190,13 +190,13 @@ export const contentKeys = sqliteTable(
     elementId: text().notNull(),
     elementKey: text(),
   },
-  (table) => [
+  table => [
     index("content_keys_volume").on(table.volumeId),
     primaryKey({
       columns: [table.volumeId, table.elementId],
       name: "content_keys_pk",
     }),
-  ]
+  ],
 );
 
 export const bookmark = sqliteTable(
@@ -226,15 +226,15 @@ export const bookmark = sqliteTable(
     userId: text("UserID"),
     syncTime: text("SyncTime"),
     published: customType({ dataType: () => "BIT" })("Published").default(
-      "false"
+      "false",
     ),
     contextString: text("ContextString"),
     type: text("Type"),
   },
-  (table) => [
+  table => [
     index("bookmark_volume").on(table.volumeId),
     index("bookmark_content").on(table.contentId),
-  ]
+  ],
 );
 
 export const event = sqliteTable(
@@ -248,12 +248,12 @@ export const event = sqliteTable(
     extraData: blob("ExtraData"),
     checksum: text("Checksum"),
   },
-  (table) => [
+  table => [
     primaryKey({
       columns: [table.eventType, table.contentId],
       name: "Event_pk",
     }),
-  ]
+  ],
 );
 
 export const achievement = sqliteTable("Achievement", {
@@ -295,14 +295,14 @@ export const volumeTabs = sqliteTable(
     volumeId: text().notNull(),
     tabId: text().default("abcdefff-ffff-ffff-ffff-fffffffffffd").notNull(),
   },
-  (table) => [
+  table => [
     index("volume_tabs_tabId").on(table.tabId),
     index("volume_tabs_volumeId").on(table.volumeId),
     primaryKey({
       columns: [table.volumeId, table.tabId],
       name: "volume_tabs_pk",
     }),
-  ]
+  ],
 );
 
 export const ratings = sqliteTable("ratings", {
@@ -321,13 +321,13 @@ export const shelfContent = sqliteTable(
     isDeleted: customType({ dataType: () => "BOOL" })("_IsDeleted"),
     isSynced: customType({ dataType: () => "BOOL" })("_IsSynced"),
   },
-  (table) => [
+  table => [
     index("shelfcontent_datemodified_index").on(table.dateModified),
     primaryKey({
       columns: [table.shelfName, table.contentId],
       name: "ShelfContent_pk",
     }),
-  ]
+  ],
 );
 
 export const contentSettings = sqliteTable(
@@ -344,30 +344,30 @@ export const contentSettings = sqliteTable(
     readingRightMargin: integer("ReadingRightMargin"),
     readingPublisherMode: integer("ReadingPublisherMode"),
     activityFacebookShare: customType({ dataType: () => "BIT" })(
-      "ActivityFacebookShare"
+      "ActivityFacebookShare",
     ).default("TRUE"),
     recentBookSearches: text("RecentBookSearches"),
     authorNotesShown: customType({ dataType: () => "BIT" })(
-      "AuthorNotesShown"
+      "AuthorNotesShown",
     ).default("false"),
     lastAuthorNotesSyncTime: text("LastAuthorNotesSyncTime"),
     zoomFactor: integer("ZoomFactor").default(1),
     btbFooterSection: text("BTBFooterSection"),
     selectedDictionary: text("SelectedDictionary"),
     stillReading: customType({ dataType: () => "BIT" })("StillReading").default(
-      "FALSE"
+      "FALSE",
     ),
     seriesShown: customType({ dataType: () => "BIT" })("SeriesShown").default(
-      "FALSE"
+      "FALSE",
     ),
   },
-  (table) => [
+  table => [
     index("content_settings_index").on(table.contentId, table.contentType),
     primaryKey({
       columns: [table.contentId, table.contentType],
       name: "content_settings_pk",
     }),
-  ]
+  ],
 );
 
 export const shelf = sqliteTable(
@@ -385,11 +385,11 @@ export const shelf = sqliteTable(
     syncTime: text("_SyncTime"),
     lastAccessed: text("LastAccessed"),
   },
-  (table) => [
+  table => [
     index("shelf_creationdate_index").on(table.creationDate),
     index("shelf_name_index").on(table.name),
     index("shelf_id_index").on(table.id),
-  ]
+  ],
 );
 
 export const user = sqliteTable("user", {
@@ -400,13 +400,13 @@ export const user = sqliteTable("user", {
   deviceId: text("___DeviceID"),
   facebookAuthToken: text("FacebookAuthToken"),
   hasMadePurchase: customType({ dataType: () => "BIT" })(
-    "HasMadePurchase"
+    "HasMadePurchase",
   ).default("FALSE"),
   isOneStoreAccount: customType({ dataType: () => "BIT" })(
-    "IsOneStoreAccount"
+    "IsOneStoreAccount",
   ).default("FALSE"),
   isChildAccount: customType({ dataType: () => "BIT" })(
-    "IsChildAccount"
+    "IsChildAccount",
   ).default("FALSE"),
   refreshToken: text("RefreshToken"),
   authToken: text("AuthToken"),
@@ -428,7 +428,7 @@ export const user = sqliteTable("user", {
   annotationsSyncToken: text("AnnotationsSyncToken"),
   privacyPermissions: blob("PrivacyPermissions"),
   annotationsMigrated: customType({ dataType: () => "BIT" })(
-    "AnnotationsMigrated"
+    "AnnotationsMigrated",
   )
     .default("false")
     .notNull(),
@@ -465,10 +465,10 @@ export const analyticsEvents = sqliteTable(
     testGroups: text("TestGroups"),
     clientApplicationVersion: text("ClientApplicationVersion"),
     mandatory: customType({ dataType: () => "BIT" })("Mandatory").default(
-      "FALSE"
+      "FALSE",
     ),
   },
-  (table) => [index("analytics_events_timestamp").on(table.timestamp)]
+  table => [index("analytics_events_timestamp").on(table.timestamp)],
 );
 
 export const activity = sqliteTable(
@@ -481,10 +481,10 @@ export const activity = sqliteTable(
     date: text("Date"),
     data: blob("Data"),
   },
-  (table) => [
+  table => [
     index("activity_id_index").on(table.id),
     primaryKey({ columns: [table.id, table.type], name: "Activity_pk" }),
-  ]
+  ],
 );
 
 export const authors = sqliteTable("Authors", {
@@ -500,12 +500,12 @@ export const bookAuthors = sqliteTable(
     authorId: text("AuthorId"),
     bookId: text("BookId"),
   },
-  (table) => [
+  table => [
     primaryKey({
       columns: [table.authorId, table.bookId],
       name: "BookAuthors_pk",
     }),
-  ]
+  ],
 );
 
 export const reviews = sqliteTable("Reviews", {
@@ -551,7 +551,7 @@ export const overDriveCards = sqliteTable(
     name: text("Name"),
     lastModified: text("LastModified"),
   },
-  (table) => [index("overdrive_cards_library_key_index").on(table.libraryKey)]
+  table => [index("overdrive_cards_library_key_index").on(table.libraryKey)],
 );
 
 export const overDriveLibrary = sqliteTable("OverDriveLibrary", {
@@ -616,7 +616,7 @@ export const koboPlusAssetGroup = sqliteTable(
     timestampTo: text("TimestampTo"),
     shown: customType({ dataType: () => "BOOL" })("Shown").default("FALSE"),
   },
-  (table) => [index("kobo_plus_asset_group_index").on(table.assetGroup)]
+  table => [index("kobo_plus_asset_group_index").on(table.assetGroup)],
 );
 
 export const koboPlusAssets = sqliteTable(
@@ -630,12 +630,12 @@ export const koboPlusAssets = sqliteTable(
     type: text("Type"),
     value: text("Value"),
   },
-  (table) => [
+  table => [
     primaryKey({
       columns: [table.assetGroupId, table.key, table.language],
       name: "KoboPlusAssets_pk",
     }),
-  ]
+  ],
 );
 
 export const gdriveItem = sqliteTable("GDriveItem", {

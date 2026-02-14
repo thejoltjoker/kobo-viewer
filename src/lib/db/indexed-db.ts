@@ -2,7 +2,7 @@ export const DB_NAME = "kobo-reader-db";
 export const STORE_NAME = "database";
 export const DB_VERSION = 1;
 
-export const openDB = async (): Promise<IDBDatabase> => {
+export async function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
@@ -16,9 +16,9 @@ export const openDB = async (): Promise<IDBDatabase> => {
       }
     };
   });
-};
+}
 
-export const saveDatabase = async (buffer: ArrayBuffer): Promise<void> => {
+export async function saveDatabase(buffer: ArrayBuffer): Promise<void> {
   try {
     const db = await openDB();
     const transaction = db.transaction([STORE_NAME], "readwrite");
@@ -29,13 +29,14 @@ export const saveDatabase = async (buffer: ArrayBuffer): Promise<void> => {
       request.onerror = () => reject(request.error);
       request.onsuccess = () => resolve();
     });
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Failed to save database to IndexedDB:", error);
     throw error;
   }
-};
+}
 
-export const loadDatabase = async (): Promise<ArrayBuffer | null> => {
+export async function loadDatabase(): Promise<ArrayBuffer | null> {
   try {
     const db = await openDB();
     const transaction = db.transaction([STORE_NAME], "readonly");
@@ -49,22 +50,24 @@ export const loadDatabase = async (): Promise<ArrayBuffer | null> => {
         resolve(result || null);
       };
     });
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Failed to load database from IndexedDB:", error);
     return null;
   }
-};
+}
 
-export const hasStoredDatabase = async (): Promise<boolean> => {
+export async function hasStoredDatabase(): Promise<boolean> {
   try {
     const buffer = await loadDatabase();
     return buffer !== null;
-  } catch {
+  }
+  catch {
     return false;
   }
-};
+}
 
-export const clearDatabase = async (): Promise<void> => {
+export async function clearDatabase(): Promise<void> {
   try {
     const db = await openDB();
     const transaction = db.transaction([STORE_NAME], "readwrite");
@@ -75,8 +78,9 @@ export const clearDatabase = async (): Promise<void> => {
       request.onerror = () => reject(request.error);
       request.onsuccess = () => resolve();
     });
-  } catch (error) {
+  }
+  catch (error) {
     console.error("Failed to clear database from IndexedDB:", error);
     throw error;
   }
-};
+}

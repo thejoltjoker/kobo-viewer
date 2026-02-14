@@ -1,6 +1,5 @@
 import {
   Badge,
-  Box,
   Button,
   Combobox,
   createListCollection,
@@ -9,40 +8,16 @@ import {
   Stack,
   Wrap,
 } from "@chakra-ui/react";
-import React, { useMemo, useState } from "react";
+import * as React from "react";
+import { useMemo, useState } from "react";
 import { LuFilter } from "react-icons/lu";
+
 export interface DictSuffixFilterProps {
   dictSuffixes: string[];
 }
 
-const DictSuffixFilter: React.FC<DictSuffixFilterProps> = ({
-  dictSuffixes,
-}) => {
-  const [searchValue, setSearchValue] = useState("");
-  const [selectedDictSuffixes, setSelectedDictSuffixes] = useState<string[]>(
-    []
-  );
-
-  const filteredItems = useMemo(
-    () =>
-      dictSuffixes.filter((item) =>
-        item.toLowerCase().includes(searchValue.toLowerCase())
-      ),
-    [dictSuffixes, searchValue]
-  );
-
-  const collection = useMemo(
-    () => createListCollection({ items: filteredItems }),
-    [filteredItems]
-  );
-
-  const handleValueChange = (details: Combobox.ValueChangeDetails) => {
-    setSelectedDictSuffixes(details.value);
-  };
-  const FilterTrigger = React.forwardRef<
-    HTMLSpanElement,
-    React.HTMLAttributes<HTMLSpanElement>
-  >(({ onClick, ...props }, ref) => (
+function FilterTrigger({ ref: _ref, onClick, ...props }: React.HTMLAttributes<HTMLSpanElement> & { ref?: React.RefObject<HTMLSpanElement | null> }) {
+  return (
     <Button
       size="sm"
       variant="outline"
@@ -52,10 +27,38 @@ const DictSuffixFilter: React.FC<DictSuffixFilterProps> = ({
         onClick?.(e);
       }}
     >
-      <LuFilter /> Filters
+      <LuFilter />
+      {" "}
+      Filters
     </Button>
-  ));
-  FilterTrigger.displayName = "FilterTrigger";
+  );
+}
+FilterTrigger.displayName = "FilterTrigger";
+
+const DictSuffixFilter: React.FC<DictSuffixFilterProps> = ({
+  dictSuffixes,
+}) => {
+  const [searchValue, setSearchValue] = useState("");
+  const [selectedDictSuffixes, setSelectedDictSuffixes] = useState<string[]>(
+    [],
+  );
+
+  const filteredItems = useMemo(
+    () =>
+      dictSuffixes.filter(item =>
+        item.toLowerCase().includes(searchValue.toLowerCase()),
+      ),
+    [dictSuffixes, searchValue],
+  );
+
+  const collection = useMemo(
+    () => createListCollection({ items: filteredItems }),
+    [filteredItems],
+  );
+
+  const handleValueChange = (details: Combobox.ValueChangeDetails) => {
+    setSelectedDictSuffixes(details.value);
+  };
 
   return (
     <Popover.Root>
@@ -74,12 +77,11 @@ const DictSuffixFilter: React.FC<DictSuffixFilterProps> = ({
                   value={selectedDictSuffixes}
                   collection={collection}
                   onValueChange={handleValueChange}
-                  onInputValueChange={(details) =>
-                    setSearchValue(details.inputValue)
-                  }
+                  onInputValueChange={details =>
+                    setSearchValue(details.inputValue)}
                 >
                   <Wrap gap="2">
-                    {selectedDictSuffixes.map((skill) => (
+                    {selectedDictSuffixes.map(skill => (
                       <Badge key={skill}>{skill}</Badge>
                     ))}
                   </Wrap>
@@ -100,7 +102,7 @@ const DictSuffixFilter: React.FC<DictSuffixFilterProps> = ({
                           <Combobox.ItemGroupLabel>
                             DictSuffixes
                           </Combobox.ItemGroupLabel>
-                          {filteredItems.map((item) => (
+                          {filteredItems.map(item => (
                             <Combobox.Item key={item} item={item}>
                               {item}
                               <Combobox.ItemIndicator />

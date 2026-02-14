@@ -1,5 +1,6 @@
-import { Box } from "@chakra-ui/react";
 import type { BoxProps } from "@chakra-ui/react";
+
+import { Box } from "@chakra-ui/react";
 
 export interface ProseProps extends BoxProps {
   size?: "sm" | "md" | "lg";
@@ -10,7 +11,7 @@ export interface ProseProps extends BoxProps {
  * Styles links, emphasis, and typography to match the design system.
  * @see https://www.chakra-ui.com/docs/components/prose
  */
-export const Prose = ({ size = "md", children, ...rest }: ProseProps) => {
+export function Prose({ size = "md", children, ...rest }: ProseProps) {
   const sizeMap = {
     sm: { fontSize: "xs", lineHeight: "1.5" },
     md: { fontSize: "sm", lineHeight: "tall" },
@@ -48,4 +49,4 @@ export const Prose = ({ size = "md", children, ...rest }: ProseProps) => {
       {children}
     </Box>
   );
-};
+}

@@ -1,6 +1,9 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
+
+import type { DrizzleDb } from "./index";
+
+import { createDrizzleDb } from "./index";
 import { getWordlistWithBookTitles } from "./queries";
-import { createDrizzleDb, type DrizzleDb } from "./index";
 
 describe("getWordlistWithBookTitles", () => {
   let db: DrizzleDb;
@@ -46,7 +49,7 @@ describe("getWordlistWithBookTitles", () => {
     sqlDb.run(
       `INSERT INTO WordList (Text, VolumeId, DictSuffix, DateCreated) VALUES 
        ('word1', 'volume1', 'suffix1', '2024-01-01'),
-       ('word2', 'volume2', 'suffix2', '2024-01-02')`
+       ('word2', 'volume2', 'suffix2', '2024-01-02')`,
     );
 
     const result = await getWordlistWithBookTitles(db);
@@ -72,14 +75,14 @@ describe("getWordlistWithBookTitles", () => {
     sqlDb.run(
       `INSERT INTO content (ContentID, ContentType, MimeType, BookID, BookTitle) VALUES 
        ('content1', 'type1', 'mime1', 'volume1', 'Book Title 1'),
-       ('content2', 'type2', 'mime2', 'volume2', 'Book Title 2')`
+       ('content2', 'type2', 'mime2', 'volume2', 'Book Title 2')`,
     );
 
     // Insert wordlist entries
     sqlDb.run(
       `INSERT INTO WordList (Text, VolumeId, DictSuffix, DateCreated) VALUES 
        ('word1', 'volume1', 'suffix1', '2024-01-01'),
-       ('word2', 'volume2', 'suffix2', '2024-01-02')`
+       ('word2', 'volume2', 'suffix2', '2024-01-02')`,
     );
 
     const result = await getWordlistWithBookTitles(db);
@@ -101,14 +104,14 @@ describe("getWordlistWithBookTitles", () => {
     sqlDb.run(
       `INSERT INTO content (ContentID, ContentType, MimeType, BookID, BookTitle) VALUES 
        ('volume1', 'type1', 'mime1', 'different-book-id', 'Book Title 1'),
-       ('volume2', 'type2', 'mime2', NULL, 'Book Title 2')`
+       ('volume2', 'type2', 'mime2', NULL, 'Book Title 2')`,
     );
 
     // Insert wordlist entries
     sqlDb.run(
       `INSERT INTO WordList (Text, VolumeId, DictSuffix, DateCreated) VALUES 
        ('word1', 'volume1', 'suffix1', '2024-01-01'),
-       ('word2', 'volume2', 'suffix2', '2024-01-02')`
+       ('word2', 'volume2', 'suffix2', '2024-01-02')`,
     );
 
     const result = await getWordlistWithBookTitles(db);
@@ -129,7 +132,7 @@ describe("getWordlistWithBookTitles", () => {
     // Insert wordlist entry without volumeId
     sqlDb.run(
       `INSERT INTO WordList (Text, VolumeId, DictSuffix, DateCreated) VALUES 
-       ('word1', NULL, 'suffix1', '2024-01-01')`
+       ('word1', NULL, 'suffix1', '2024-01-01')`,
     );
 
     const result = await getWordlistWithBookTitles(db);
@@ -145,7 +148,7 @@ describe("getWordlistWithBookTitles", () => {
     // Insert content
     sqlDb.run(
       `INSERT INTO content (ContentID, ContentType, MimeType, BookID, BookTitle) VALUES 
-       ('content1', 'type1', 'mime1', 'volume1', 'Book Title 1')`
+       ('content1', 'type1', 'mime1', 'volume1', 'Book Title 1')`,
     );
 
     // Insert multiple wordlist entries with same volumeId
@@ -153,7 +156,7 @@ describe("getWordlistWithBookTitles", () => {
       `INSERT INTO WordList (Text, VolumeId, DictSuffix, DateCreated) VALUES 
        ('word1', 'volume1', 'suffix1', '2024-01-01'),
        ('word2', 'volume1', 'suffix2', '2024-01-02'),
-       ('word3', 'volume1', 'suffix3', '2024-01-03')`
+       ('word3', 'volume1', 'suffix3', '2024-01-03')`,
     );
 
     const result = await getWordlistWithBookTitles(db);
@@ -170,13 +173,13 @@ describe("getWordlistWithBookTitles", () => {
     sqlDb.run(
       `INSERT INTO content (ContentID, ContentType, MimeType, BookID, BookTitle) VALUES 
        ('volume1', 'type1', 'mime1', 'volume1', 'Book Title from BookID'),
-       ('other-id', 'type2', 'mime2', 'volume1', 'Book Title from ContentID')`
+       ('other-id', 'type2', 'mime2', 'volume1', 'Book Title from ContentID')`,
     );
 
     // Insert wordlist entry
     sqlDb.run(
       `INSERT INTO WordList (Text, VolumeId, DictSuffix, DateCreated) VALUES 
-       ('word1', 'volume1', 'suffix1', '2024-01-01')`
+       ('word1', 'volume1', 'suffix1', '2024-01-01')`,
     );
 
     const result = await getWordlistWithBookTitles(db);

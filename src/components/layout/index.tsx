@@ -1,8 +1,10 @@
 import { Box } from "@chakra-ui/react";
-import { Outlet } from "react-router";
-import { Sidebar, getSidebarWidth } from "@/components/sidebar";
-import { Toaster } from "@/components/ui/toaster";
 import { useState } from "react";
+import { Outlet } from "react-router";
+
+import { Sidebar } from "@/components/sidebar";
+import { getSidebarWidth } from "@/components/sidebar/utils";
+import { Toaster } from "@/components/ui/toaster";
 
 export function Layout() {
   const [isCollapsed, setIsCollapsed] = useState(false);

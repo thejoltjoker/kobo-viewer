@@ -1,9 +1,5 @@
-import { Prose } from "@/components/ui/prose";
-import {
-  getMeaningGroups,
-  getWiktionaryDefinition,
-  rewriteWiktionaryLinks,
-} from "@/lib/api/wiktionary";
+/* eslint-disable react/no-array-index-key -- meaning group key uses index as fallback for duplicate partOfSpeech+language */
+/* eslint-disable react-dom/no-dangerously-set-innerhtml -- Wiki HTML from API, sanitized by rewriteWiktionaryLinks */
 import {
   Badge,
   Box,
@@ -18,17 +14,24 @@ import {
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 
+import { Prose } from "@/components/ui/prose";
+import {
+  getMeaningGroups,
+  getWiktionaryDefinition,
+  rewriteWiktionaryLinks,
+} from "@/lib/api/wiktionary";
+
 export interface WordDefinitionDrawerProps {
   word: string;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
 
-const WordDefinitionDrawer = ({
+function WordDefinitionDrawer({
   word,
   open = false,
   onOpenChange,
-}: WordDefinitionDrawerProps) => {
+}: WordDefinitionDrawerProps) {
   const {
     data: definition,
     isLoading: loading,
@@ -42,13 +45,13 @@ const WordDefinitionDrawer = ({
 
   const isControlled = onOpenChange != null;
   const meaningGroups = definition ? getMeaningGroups(definition) : [];
-  const errorMessage =
-    error instanceof Error ? error.message : "Failed to load definition";
+  const errorMessage
+    = error instanceof Error ? error.message : "Failed to load definition";
 
   return (
     <Drawer.Root
       open={isControlled ? open : undefined}
-      onOpenChange={isControlled ? (e) => onOpenChange(e.open) : undefined}
+      onOpenChange={isControlled ? e => onOpenChange(e.open) : undefined}
     >
       <Portal>
         <Drawer.Backdrop />
@@ -77,10 +80,11 @@ const WordDefinitionDrawer = ({
                     <Text color="fg">{errorMessage}</Text>
                   </Box>
                   <Text color="fg.muted">
-                    Try searching on{" "}
+                    Try searching on
+                    {" "}
                     <Link
                       href={`https://www.wordreference.com/definition/${encodeURIComponent(
-                        word
+                        word,
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -88,11 +92,13 @@ const WordDefinitionDrawer = ({
                       textDecoration="underline"
                     >
                       WordReference
-                    </Link>{" "}
-                    or{" "}
+                    </Link>
+                    {" "}
+                    or
+                    {" "}
                     <Link
                       href={`https://en.wiktionary.org/wiki/${encodeURIComponent(
-                        word
+                        word,
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -109,7 +115,12 @@ const WordDefinitionDrawer = ({
               {!loading && !isErrorState && meaningGroups.length > 0 && (
                 <VStack align="stretch" gap="4">
                   {meaningGroups.map((item, idx) => (
-                    <VStack key={idx} align="stretch" gap="2">
+
+                    <VStack
+                      key={`${item.partOfSpeech}-${item.language ?? ""}-${idx}`}
+                      align="stretch"
+                      gap="2"
+                    >
                       <HStack gap="2" align="center" flexWrap="wrap">
                         <Badge
                           colorPalette="blue"
@@ -132,40 +143,47 @@ const WordDefinitionDrawer = ({
                         margin="0"
                         css={{ "& li": { mb: 2 } }}
                       >
-                        {(item.definitions ?? []).map((def, defIdx) => (
-                          <Box key={defIdx} as="li">
+                        {(item.definitions ?? []).map(def => (
+                          <Box
+                            key={def.definition}
+                            as="li"
+                          >
                             <Prose>
                               <VStack align="stretch" gap="0.5">
+                                { }
                                 <Box
                                   dangerouslySetInnerHTML={{
                                     __html: rewriteWiktionaryLinks(
-                                      def.definition
+                                      def.definition,
                                     ),
                                   }}
                                 />
-                                {def.parsedExamples?.map((ex, exIdx) => (
+                                {def.parsedExamples?.map(ex => (
+
                                   <Box
-                                    key={exIdx}
+                                    key={ex.example}
                                     color="fg.muted"
                                     fontStyle="italic"
                                     pl="2"
                                     dangerouslySetInnerHTML={{
                                       __html: `"${rewriteWiktionaryLinks(
-                                        ex.example
+                                        ex.example,
                                       )}"`,
                                     }}
                                   />
                                 ))}
-                                {!def.parsedExamples?.length &&
-                                  def.examples?.[0] && (
-                                    <Text
-                                      color="fg.muted"
-                                      fontStyle="italic"
-                                      pl="2"
-                                    >
-                                      &quot;{def.examples[0]}&quot;
-                                    </Text>
-                                  )}
+                                {!def.parsedExamples?.length
+                                  && def.examples?.[0] && (
+                                  <Text
+                                    color="fg.muted"
+                                    fontStyle="italic"
+                                    pl="2"
+                                  >
+                                    &quot;
+                                    {def.examples[0]}
+                                    &quot;
+                                  </Text>
+                                )}
                               </VStack>
                             </Prose>
                           </Box>
@@ -196,6 +214,6 @@ const WordDefinitionDrawer = ({
       </Portal>
     </Drawer.Root>
   );
-};
+}
 
 export default WordDefinitionDrawer;

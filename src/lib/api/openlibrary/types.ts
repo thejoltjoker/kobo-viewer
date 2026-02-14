@@ -45,8 +45,8 @@ export interface OpenLibraryEditionIdentifiers {
 
 /** Work/Edition by ID - structure varies; use generic for thin client */
 export type OpenLibraryWork = OpenLibraryWorkIdentifiers & Record<string, unknown>;
-export type OpenLibraryEdition = OpenLibraryEditionIdentifiers &
-  Record<string, unknown>;
+export type OpenLibraryEdition = OpenLibraryEditionIdentifiers
+  & Record<string, unknown>;
 
 export type CoverSize = "S" | "M" | "L";
 export type CoverKey = "id" | "isbn" | "oclc" | "lccn" | "olid";

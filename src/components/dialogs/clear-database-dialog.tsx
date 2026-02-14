@@ -1,4 +1,5 @@
 import { Button, Dialog, Text } from "@chakra-ui/react";
+
 import { useDatabase } from "@/lib/db/hooks";
 
 interface ClearDatabaseDialogProps {
@@ -16,13 +17,14 @@ export function ClearDatabaseDialog({
     try {
       await clearDatabase();
       onOpenChange(false);
-    } catch (error) {
+    }
+    catch (error) {
       console.error("Failed to clear database:", error);
     }
   };
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={(e) => onOpenChange(e.open)}>
+    <Dialog.Root open={isOpen} onOpenChange={e => onOpenChange(e.open)}>
       <Dialog.Backdrop />
       <Dialog.Positioner>
         <Dialog.Content>
