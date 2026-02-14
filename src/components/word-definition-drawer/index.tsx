@@ -21,6 +21,16 @@ export interface WordDefinitionDrawerProps {
   onOpenChange?: (open: boolean) => void;
 }
 
+const WIKTIONARY_ORIGIN = "https://en.wiktionary.org";
+
+function rewriteWiktionaryLinks(html: string): string {
+  return html
+    .replace(/href="\/wiki\//g, `href="${WIKTIONARY_ORIGIN}/wiki/`)
+    .replace(/href='\/wiki\//g, `href='${WIKTIONARY_ORIGIN}/wiki/`)
+    .replace(/href="\/w\//g, `href="${WIKTIONARY_ORIGIN}/w/`)
+    .replace(/href='\/w\//g, `href='${WIKTIONARY_ORIGIN}/w/`);
+}
+
 function getMeaningGroups(data: WiktionaryResponse) {
   return (
     Object.values(data) as Array<{
@@ -149,7 +159,9 @@ const WordDefinitionDrawer = ({
                               <VStack align="stretch" gap="0.5">
                                 <Box
                                   dangerouslySetInnerHTML={{
-                                    __html: def.definition,
+                                    __html: rewriteWiktionaryLinks(
+                                      def.definition
+                                    ),
                                   }}
                                 />
                                 {def.parsedExamples?.map((ex, exIdx) => (
@@ -159,7 +171,9 @@ const WordDefinitionDrawer = ({
                                     fontStyle="italic"
                                     pl="2"
                                     dangerouslySetInnerHTML={{
-                                      __html: `"${ex.example}"`,
+                                      __html: `"${rewriteWiktionaryLinks(
+                                        ex.example
+                                      )}"`,
                                     }}
                                   />
                                 ))}

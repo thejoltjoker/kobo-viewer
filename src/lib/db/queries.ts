@@ -74,10 +74,3 @@ export async function getBookmarksWithBookTitles(
     bookTitle: entry.volumeId ? bookTitleMap.get(entry.volumeId) || null : null,
   }));
 }
-
-export async function deleteWordFromWordlist(
-  db: DrizzleDb,
-  wordText: string
-): Promise<void> {
-  await db.delete(schema.wordList).where(eq(schema.wordList.text, wordText));
-}
