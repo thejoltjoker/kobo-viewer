@@ -2,16 +2,14 @@ import { useDatabase } from "@/lib/db/hooks";
 import { getWordlistWithBookTitles } from "@/lib/db/queries";
 import type { WordlistWithBookTitle } from "@/lib/db/types";
 import {
-  ButtonGroup,
+  createListCollection,
   DownloadTrigger,
   Input,
   InputGroup,
-  Kbd,
   Select,
   Tabs,
-  createListCollection,
 } from "@chakra-ui/react";
-import { LuChevronDown, LuLayoutGrid, LuList, LuSearch } from "react-icons/lu";
+import { LuArrowDown, LuArrowUp, LuLayoutGrid, LuList, LuSearch } from "react-icons/lu";
 
 import { Tooltip } from "@/components/ui/tooltip";
 import {
@@ -21,26 +19,30 @@ import {
   IconButton,
   Portal,
   Table,
+  Text,
   VStack,
 } from "@chakra-ui/react";
-
-import { Text } from "@chakra-ui/react";
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import type { SortingState } from "@tanstack/react-table";
 import { useEffect, useMemo, useState } from "react";
 
-import WordDefinitionDrawer from "@/components/word-definition-drawer";
 import { toaster } from "@/components/ui/toaster";
+import WordDefinitionDrawer from "@/components/word-definition-drawer";
 import { ActionBar, Checkbox } from "@chakra-ui/react";
 import { LuCopy, LuDownload } from "react-icons/lu";
 export interface WordlistProps {}
 
 const WordlistTable = () => {
   const [selection, setSelection] = useState<string[]>([]);
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "dateCreated", desc: true },
+  ]);
   const { db } = useDatabase();
   const [wordlist, setWordlist] = useState<WordlistWithBookTitle[]>([]);
   const [columnVisibility, setColumnVisibility] = useState<
@@ -121,6 +123,7 @@ const WordlistTable = () => {
       }),
       columnHelper.accessor("text", {
         header: () => "Word",
+        enableSorting: true,
         cell: (info) => {
           const wordText = info.renderValue() ?? "";
 
@@ -144,21 +147,32 @@ const WordlistTable = () => {
             </HStack>
           );
         },
-        footer: (info) => info.column.id,
+        sortUndefined: "last",
+        sortDescFirst: false,
       }),
       columnHelper.accessor("bookTitle", {
         id: "bookTitle",
         header: () => <span className="no-wrap">Book Title</span>,
+        enableSorting: true,
         cell: (info) => info.getValue(),
       }),
       columnHelper.accessor("dictSuffix", {
         id: "dictSuffix",
         header: () => <span className="no-wrap">Dict Suffix</span>,
+        enableSorting: true,
         cell: (info) => <Badge colorPalette="purple">{info.getValue()}</Badge>,
       }),
       columnHelper.accessor("dateCreated", {
         id: "dateCreated",
         header: () => <span className="no-wrap">Date Created</span>,
+        enableSorting: true,
+        sortingFn: (rowA, rowB) => {
+          const a = rowA.original.dateCreated;
+          const b = rowB.original.dateCreated;
+          const timeA = a ? new Date(a).getTime() : 0;
+          const timeB = b ? new Date(b).getTime() : 0;
+          return timeA - timeB;
+        },
         cell: (info) =>
           info.row.original.dateCreated
             ? new Date(info.row.original.dateCreated).toLocaleDateString()
@@ -205,10 +219,14 @@ const WordlistTable = () => {
     columns,
     data: wordlist,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     state: {
       columnVisibility,
+      sorting,
     },
     onColumnVisibilityChange: setColumnVisibility,
+    onSortingChange: setSorting,
+    enableSorting: true,
   });
 
   const columnOptions = useMemo(() => {
@@ -365,8 +383,12 @@ const WordlistTable = () => {
               borderColor="border.emphasized"
             >
               {headerGroup.headers.map((header, index) => {
+                {
+                }
                 const isFirst = index === 0;
                 const isLast = index === headerGroup.headers.length - 1;
+                const canSort = header.column.getCanSort();
+                const toggleSorting = header.column.getToggleSortingHandler();
                 return (
                   <Table.ColumnHeader
                     key={header.id}
@@ -376,12 +398,50 @@ const WordlistTable = () => {
                     borderBottomRightRadius={isLast ? 5 : 0}
                     borderBottom="none"
                   >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                    {canSort && toggleSorting ? (
+                      <button
+                        type="button"
+                        onClick={toggleSorting}
+                        title={
+                          header.column.getNextSortingOrder() === "asc"
+                            ? "Sort ascending"
+                            : header.column.getNextSortingOrder() === "desc"
+                            ? "Sort descending"
+                            : "Clear sort"
+                        }
+                        style={{
+                          cursor: "pointer",
+                          userSelect: "none",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "4px",
+                          background: "transparent",
+                          border: "none",
+                          padding: 0,
+                          font: "inherit",
+                        }}
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                        {{
+                          asc: <LuArrowUp/>,
+                          desc: <LuArrowDown/>,
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </button>
+                    ) : (
+                      <>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </>
+                    )}
                   </Table.ColumnHeader>
                 );
               })}

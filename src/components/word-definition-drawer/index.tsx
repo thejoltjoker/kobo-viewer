@@ -21,7 +21,6 @@ export interface WordDefinitionDrawerProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-/** Flatten all language arrays from Wiktionary response into a single list of meaning groups */
 function getMeaningGroups(data: WiktionaryResponse) {
   return (
     Object.values(data) as Array<{
