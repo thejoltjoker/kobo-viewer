@@ -1,6 +1,9 @@
 import { Prose } from "@/components/ui/prose";
-import { getDefinition } from "@/lib/api/definitions";
-import type { WiktionaryResponse } from "@/lib/api/types/wiktionary";
+import {
+  getMeaningGroups,
+  getWiktionaryDefinition,
+  rewriteWiktionaryLinks,
+} from "@/lib/api/wiktionary";
 import {
   Badge,
   Box,
@@ -21,30 +24,6 @@ export interface WordDefinitionDrawerProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-const WIKTIONARY_ORIGIN = "https://en.wiktionary.org";
-
-function rewriteWiktionaryLinks(html: string): string {
-  return html
-    .replace(/href="\/wiki\//g, `href="${WIKTIONARY_ORIGIN}/wiki/`)
-    .replace(/href='\/wiki\//g, `href='${WIKTIONARY_ORIGIN}/wiki/`)
-    .replace(/href="\/w\//g, `href="${WIKTIONARY_ORIGIN}/w/`)
-    .replace(/href='\/w\//g, `href='${WIKTIONARY_ORIGIN}/w/`);
-}
-
-function getMeaningGroups(data: WiktionaryResponse) {
-  return (
-    Object.values(data) as Array<{
-      partOfSpeech: string;
-      language?: string;
-      definitions: Array<{
-        definition: string;
-        parsedExamples?: Array<{ example: string }>;
-        examples?: string[];
-      }>;
-    }>
-  ).flat();
-}
-
 const WordDefinitionDrawer = ({
   word,
   open = false,
@@ -57,7 +36,7 @@ const WordDefinitionDrawer = ({
     error,
   } = useQuery({
     queryKey: ["definition", word],
-    queryFn: () => getDefinition(word),
+    queryFn: () => getWiktionaryDefinition(word),
     enabled: open && !!word,
   });
 

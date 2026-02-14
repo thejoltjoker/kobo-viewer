@@ -1,7 +1,8 @@
 import { useDatabase } from "@/lib/db/hooks";
 import { getWordlistWithBookTitles } from "@/lib/db/queries";
-import type { WordlistWithBookTitle } from "@/lib/db/types";
+import type { WordlistWithBookMeta } from "@/lib/db/types";
 import {
+  ButtonGroup,
   createListCollection,
   DownloadTrigger,
   Input,
@@ -9,11 +10,20 @@ import {
   Select,
   Tabs,
 } from "@chakra-ui/react";
-import { LuArrowDown, LuArrowUp, LuLayoutGrid, LuList, LuSearch } from "react-icons/lu";
+import {
+  LuArrowDown,
+  LuArrowUp,
+  LuChevronLeft,
+  LuLayoutGrid,
+  LuList,
+  LuSearch,
+} from "react-icons/lu";
 
+import { BookHoverCard } from "@/components/book-hover-card";
 import { Tooltip } from "@/components/ui/tooltip";
 import {
   Badge,
+  Box,
   Button,
   HStack,
   IconButton,
@@ -22,20 +32,21 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
+import type { PaginationState, SortingState } from "@tanstack/react-table";
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import type { SortingState } from "@tanstack/react-table";
 import { useEffect, useMemo, useState } from "react";
 
 import { toaster } from "@/components/ui/toaster";
 import WordDefinitionDrawer from "@/components/word-definition-drawer";
-import { ActionBar, Checkbox } from "@chakra-ui/react";
-import { LuCopy, LuDownload } from "react-icons/lu";
+import { ActionBar, Checkbox, Pagination } from "@chakra-ui/react";
+import { LuChevronRight, LuCopy, LuDownload } from "react-icons/lu";
 export interface WordlistProps {}
 
 const WordlistTable = () => {
@@ -43,8 +54,12 @@ const WordlistTable = () => {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "dateCreated", desc: true },
   ]);
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
   const { db } = useDatabase();
-  const [wordlist, setWordlist] = useState<WordlistWithBookTitle[]>([]);
+  const [wordlist, setWordlist] = useState<WordlistWithBookMeta[]>([]);
   const [columnVisibility, setColumnVisibility] = useState<
     Record<string, boolean>
   >({});
@@ -76,7 +91,7 @@ const WordlistTable = () => {
   const hasSelection = selection.length > 0;
 
   const columnHelper = useMemo(
-    () => createColumnHelper<WordlistWithBookTitle>(),
+    () => createColumnHelper<WordlistWithBookMeta>(),
     []
   );
 
@@ -154,7 +169,50 @@ const WordlistTable = () => {
         id: "bookTitle",
         header: () => <span className="no-wrap">Book Title</span>,
         enableSorting: true,
-        cell: (info) => info.getValue(),
+        cell: (info) => {
+          const title = info.getValue() ?? "";
+          const author = info.row.original.bookAuthor;
+          return (
+            <HStack
+              maxW="240px"
+              w="full"
+              overflow="hidden"
+              gap="1"
+              alignItems="center"
+            >
+              <Box
+                minW={0}
+                flex={1}
+                overflow="hidden"
+                textOverflow="ellipsis"
+                whiteSpace="nowrap"
+              >
+                {title}
+              </Box>
+              <Box flexShrink={0}>
+                <BookHoverCard bookTitle={title} bookAuthor={author} />
+              </Box>
+            </HStack>
+          );
+        },
+      }),
+      columnHelper.accessor("bookAuthor", {
+        id: "bookAuthor",
+        header: () => <span className="no-wrap">Author</span>,
+        enableSorting: true,
+        cell: (info) => {
+          const author = info.getValue();
+          return (
+            <Box
+              maxW="180px"
+              overflow="hidden"
+              textOverflow="ellipsis"
+              whiteSpace="nowrap"
+            >
+              {author ?? "-"}
+            </Box>
+          );
+        },
       }),
       columnHelper.accessor("dictSuffix", {
         id: "dictSuffix",
@@ -220,12 +278,15 @@ const WordlistTable = () => {
     data: wordlist,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     state: {
       columnVisibility,
       sorting,
+      pagination,
     },
     onColumnVisibilityChange: setColumnVisibility,
     onSortingChange: setSorting,
+    onPaginationChange: setPagination,
     enableSorting: true,
   });
 
@@ -239,6 +300,8 @@ const WordlistTable = () => {
             ? "Word"
             : column.id === "bookTitle"
             ? "Book Title"
+            : column.id === "bookAuthor"
+            ? "Author"
             : column.id === "dictSuffix"
             ? "Dict Suffix"
             : column.id === "dateCreated"
@@ -251,6 +314,19 @@ const WordlistTable = () => {
   const columnCollection = useMemo(
     () => createListCollection({ items: columnOptions }),
     [columnOptions]
+  );
+
+  const pageSizeOptions = useMemo(
+    () =>
+      [10, 20, 50, 100].map((size) => ({
+        label: `${size} per page`,
+        value: String(size),
+      })),
+    []
+  );
+  const pageSizeCollection = useMemo(
+    () => createListCollection({ items: pageSizeOptions }),
+    [pageSizeOptions]
   );
 
   const visibleColumnIds = useMemo(() => {
@@ -428,8 +504,8 @@ const WordlistTable = () => {
                               header.getContext()
                             )}
                         {{
-                          asc: <LuArrowUp/>,
-                          desc: <LuArrowDown/>,
+                          asc: <LuArrowUp />,
+                          desc: <LuArrowDown />,
                         }[header.column.getIsSorted() as string] ?? null}
                       </button>
                     ) : (
@@ -450,6 +526,89 @@ const WordlistTable = () => {
         </Table.Header>
         <Table.Body>{rows}</Table.Body>
       </Table.Root>
+
+      {table.getRowCount() > 0 && (
+        <HStack
+          width="100%"
+          justify="space-between"
+          gap="4"
+          flexWrap="wrap"
+          py="3"
+          align="center"
+        >
+          <Select.Root
+            collection={pageSizeCollection}
+            value={[String(pagination.pageSize)]}
+            onValueChange={(details) => {
+              const size = Number(
+                Array.isArray(details.value) ? details.value[0] : details.value
+              );
+              if (Number.isFinite(size)) table.setPageSize(size);
+            }}
+            size="sm"
+            width="32"
+          >
+            <Select.HiddenSelect />
+            <Select.Control>
+              <Select.Trigger>
+                <Select.ValueText />
+              </Select.Trigger>
+              <Select.IndicatorGroup>
+                <Select.Indicator />
+              </Select.IndicatorGroup>
+            </Select.Control>
+            <Portal>
+              <Select.Positioner>
+                <Select.Content>
+                  {[10, 20, 50, 100].map((size) => (
+                    <Select.Item item={String(size)} key={size}>
+                      {size} per page
+                    </Select.Item>
+                  ))}
+                </Select.Content>
+              </Select.Positioner>
+            </Portal>
+          </Select.Root>
+          <Pagination.Root
+            count={table.getRowCount()}
+            page={pagination.pageIndex + 1}
+            pageSize={pagination.pageSize}
+            onPageChange={(details) => table.setPageIndex(details.page - 1)}
+            onPageSizeChange={(details) => table.setPageSize(details.pageSize)}
+            siblingCount={1}
+          >
+            <HStack gap="2" align="center">
+              {/* <Group attached>
+                <Pagination.PrevTrigger asChild>
+                  <IconButton variant="outline" size="sm" aria-label="Previous page">
+                    <LuChevronLeft />
+                  </IconButton>
+                </Pagination.PrevTrigger>
+                <Pagination.Items render={(page) => page.value} />
+                <Pagination.NextTrigger asChild>
+                  <IconButton variant="outline" size="sm" aria-label="Next page">
+                    <LuChevronRight />
+                  </IconButton>
+                </Pagination.NextTrigger>
+              </Group> */}
+              {/* <Pagination.PageText format="long" fontSize="sm" fontWeight="medium" /> */}
+              <ButtonGroup variant="ghost" size="sm" w="full">
+                <Pagination.PageText format="long" flex="1" />
+                <Pagination.PrevTrigger asChild>
+                  <IconButton>
+                    <LuChevronLeft />
+                  </IconButton>
+                </Pagination.PrevTrigger>
+                <Pagination.NextTrigger asChild>
+                  <IconButton>
+                    <LuChevronRight />
+                  </IconButton>
+                </Pagination.NextTrigger>
+              </ButtonGroup>
+            </HStack>
+          </Pagination.Root>
+        </HStack>
+      )}
 
       <ActionBar.Root open={hasSelection}>
         <Portal>

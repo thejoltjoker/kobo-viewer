@@ -1,11 +1,12 @@
 import type { bookmark, wordList } from "./drizzle/schema";
 
-export type BookTitle = {
+export type BookMeta = {
   bookTitle: string | null;
+  bookAuthor: string | null;
 };
 
 export type Wordlist = typeof wordList.$inferSelect;
-export type WordlistWithBookTitle = Wordlist & BookTitle;
+export type WordlistWithBookMeta = Wordlist & BookMeta;
 
 export type Bookmark = typeof bookmark.$inferSelect;
-export type BookmarkWithBookTitle = Bookmark & BookTitle;
+export type BookmarkWithBookMeta = Bookmark & BookMeta;

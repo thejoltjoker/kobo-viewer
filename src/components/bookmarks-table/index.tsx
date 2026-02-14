@@ -1,6 +1,6 @@
 import { useDatabase } from "@/lib/db/hooks";
-import { getBookmarks, getBookmarksWithBookTitles } from "@/lib/db/queries";
-import type { Bookmark, BookmarkWithBookTitle } from "@/lib/db/types";
+import { getBookmarks, getBookmarksWithBookMeta } from "@/lib/db/queries";
+import type { Bookmark, BookmarkWithBookMeta } from "@/lib/db/types";
 import { Button, Code, Portal, Table } from "@chakra-ui/react";
 import {
   createColumnHelper,
@@ -17,12 +17,12 @@ export interface WordlistProps {}
 const BookmarksTable = () => {
   const [selection, setSelection] = useState<string[]>([]);
   const { db } = useDatabase();
-  const [bookmarks, setBookmarks] = useState<BookmarkWithBookTitle[]>([]);
+  const [bookmarks, setBookmarks] = useState<BookmarkWithBookMeta[]>([]);
 
   const hasSelection = selection.length > 0;
 
   const columnHelper = useMemo(
-    () => createColumnHelper<BookmarkWithBookTitle>(),
+    () => createColumnHelper<BookmarkWithBookMeta>(),
     []
   );
 
@@ -119,7 +119,7 @@ const BookmarksTable = () => {
       }
 
       try {
-        const bookmarksData = await getBookmarksWithBookTitles(db);
+        const bookmarksData = await getBookmarksWithBookMeta(db);
         setBookmarks(bookmarksData);
       } catch (err) {
         console.error("Error fetching wordlist:", err);
