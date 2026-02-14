@@ -4,6 +4,8 @@ import type {
   BookmarkWithBookTitle,
   WordlistWithBookTitle,
 } from "./types";
+import { eq } from "drizzle-orm";
+import * as schema from "./drizzle/schema";
 
 export async function getWordlistWithBookTitles(
   db: DrizzleDb
@@ -71,4 +73,11 @@ export async function getBookmarksWithBookTitles(
     ...entry,
     bookTitle: entry.volumeId ? bookTitleMap.get(entry.volumeId) || null : null,
   }));
+}
+
+export async function deleteWordFromWordlist(
+  db: DrizzleDb,
+  wordText: string
+): Promise<void> {
+  await db.delete(schema.wordList).where(eq(schema.wordList.text, wordText));
 }

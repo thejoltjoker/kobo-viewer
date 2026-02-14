@@ -1,7 +1,30 @@
 import { useDatabase } from "@/lib/db/hooks";
 import { getWordlistWithBookTitles } from "@/lib/db/queries";
 import type { WordlistWithBookTitle } from "@/lib/db/types";
-import { Badge, Button, Code, Portal, Table } from "@chakra-ui/react";
+import {
+  ButtonGroup,
+  DownloadTrigger,
+  Input,
+  InputGroup,
+  Kbd,
+  Select,
+  Tabs,
+  createListCollection,
+} from "@chakra-ui/react";
+import { LuChevronDown, LuLayoutGrid, LuList, LuSearch } from "react-icons/lu";
+
+import { Tooltip } from "@/components/ui/tooltip";
+import {
+  Badge,
+  Button,
+  HStack,
+  IconButton,
+  Portal,
+  Table,
+  VStack,
+} from "@chakra-ui/react";
+
+import { Text } from "@chakra-ui/react";
 import {
   createColumnHelper,
   flexRender,
@@ -10,14 +33,43 @@ import {
 } from "@tanstack/react-table";
 import { useEffect, useMemo, useState } from "react";
 
-import { ActionBar, Checkbox, Kbd } from "@chakra-ui/react";
-import { LuDownload } from "react-icons/lu";
+import WordDefinitionDrawer from "@/components/word-definition-drawer";
+import { toaster } from "@/components/ui/toaster";
+import { ActionBar, Checkbox } from "@chakra-ui/react";
+import { LuCopy, LuDownload } from "react-icons/lu";
 export interface WordlistProps {}
 
 const WordlistTable = () => {
   const [selection, setSelection] = useState<string[]>([]);
   const { db } = useDatabase();
   const [wordlist, setWordlist] = useState<WordlistWithBookTitle[]>([]);
+  const [columnVisibility, setColumnVisibility] = useState<
+    Record<string, boolean>
+  >({});
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerWord, setDrawerWord] = useState<string | null>(null);
+
+  const handleCopy = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toaster.create({
+        title: "Copied!",
+        description: `"${text}" copied to clipboard`,
+        type: "success",
+      });
+    } catch (err) {
+      toaster.create({
+        title: "Failed to copy",
+        description: "Could not copy to clipboard",
+        type: "error",
+      });
+    }
+  };
+
+  const openDefinitionDrawer = (word: string) => {
+    setDrawerWord(word);
+    setDrawerOpen(true);
+  };
 
   const hasSelection = selection.length > 0;
 
@@ -31,6 +83,7 @@ const WordlistTable = () => {
     return [
       columnHelper.display({
         id: "select",
+        enableHiding: false,
         header: () => (
           <Checkbox.Root
             size="sm"
@@ -68,7 +121,29 @@ const WordlistTable = () => {
       }),
       columnHelper.accessor("text", {
         header: () => "Word",
-        cell: (info) => info.renderValue(),
+        cell: (info) => {
+          const wordText = info.renderValue() ?? "";
+
+          return (
+            <HStack>
+              <Text fontSize="md" fontWeight="semibold">
+                {wordText}
+              </Text>
+              <Tooltip content="Copy to clipboard">
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  fill="fg.subtle"
+                  color="fg.subtle"
+                  onClick={() => handleCopy(wordText)}
+                  aria-label={`Copy "${wordText}" to clipboard`}
+                >
+                  <LuCopy />
+                </IconButton>
+              </Tooltip>
+            </HStack>
+          );
+        },
         footer: (info) => info.column.id,
       }),
       columnHelper.accessor("bookTitle", {
@@ -89,10 +164,39 @@ const WordlistTable = () => {
             ? new Date(info.row.original.dateCreated).toLocaleDateString()
             : "-",
       }),
-      columnHelper.accessor("volumeId", {
-        id: "volumeId",
-        header: () => "Volume ID",
-        cell: (info) => <Code>{info.getValue()}</Code>,
+      columnHelper.display({
+        id: "actions",
+        header: () => "Actions",
+        cell: (info) => {
+          return (
+            <HStack gap="0">
+              <Tooltip content="Copy to clipboard">
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  fill="fg.subtle"
+                  color="fg.subtle"
+                  onClick={() => handleCopy(info.row.original.text)}
+                  aria-label={`Copy "${info.row.original.text}" to clipboard`}
+                >
+                  <LuCopy />
+                </IconButton>
+              </Tooltip>
+              <Tooltip content="Look up in dictionary">
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  fill="fg.subtle"
+                  color="fg.subtle"
+                  onClick={() => openDefinitionDrawer(info.row.original.text)}
+                  aria-label={`Look up "${info.row.original.text}" in dictionary`}
+                >
+                  <LuSearch />
+                </IconButton>
+              </Tooltip>
+            </HStack>
+          );
+        },
       }),
     ];
   }, [selection, wordlist, columnHelper]);
@@ -101,7 +205,42 @@ const WordlistTable = () => {
     columns,
     data: wordlist,
     getCoreRowModel: getCoreRowModel(),
+    state: {
+      columnVisibility,
+    },
+    onColumnVisibilityChange: setColumnVisibility,
   });
+
+  const columnOptions = useMemo(() => {
+    return table
+      .getAllColumns()
+      .filter((column) => column.id !== "select")
+      .map((column) => ({
+        label:
+          column.id === "text"
+            ? "Word"
+            : column.id === "bookTitle"
+            ? "Book Title"
+            : column.id === "dictSuffix"
+            ? "Dict Suffix"
+            : column.id === "dateCreated"
+            ? "Date Created"
+            : column.id,
+        value: column.id,
+      }));
+  }, [table]);
+
+  const columnCollection = useMemo(
+    () => createListCollection({ items: columnOptions }),
+    [columnOptions]
+  );
+
+  const visibleColumnIds = useMemo(() => {
+    return table
+      .getAllColumns()
+      .filter((column) => column.id !== "select" && column.getIsVisible())
+      .map((column) => column.id);
+  }, [table, columnVisibility]);
 
   useEffect(() => {
     async function fetchWordlist() {
@@ -135,13 +274,94 @@ const WordlistTable = () => {
   ));
 
   return (
-    <>
+    <VStack>
+      <WordDefinitionDrawer
+        word={drawerWord ?? ""}
+        open={drawerOpen}
+        onOpenChange={setDrawerOpen}
+      />
+      <HStack width="100%" justify="space-between">
+        <HStack>
+          <InputGroup flex="1" startElement={<LuSearch />} maxW="500px">
+            <Input placeholder="Search words" />
+          </InputGroup>
+        </HStack>
+
+        <HStack>
+          <Select.Root
+            multiple
+            collection={columnCollection}
+            value={visibleColumnIds}
+            onValueChange={(details) => {
+              const selectedIds = Array.isArray(details.value)
+                ? details.value
+                : details.value
+                ? [details.value]
+                : [];
+              const allColumnIds = table
+                .getAllColumns()
+                .filter((column) => column.id !== "select")
+                .map((column) => column.id);
+
+              // Update visibility: show selected columns, hide unselected ones
+              const newVisibility: Record<string, boolean> = {};
+              allColumnIds.forEach((id) => {
+                newVisibility[id] = selectedIds.includes(id);
+              });
+              setColumnVisibility(newVisibility);
+            }}
+            size="sm"
+            width="160px"
+          >
+            <Select.HiddenSelect />
+            {/* <Select.Label>Select columns</Select.Label> */}
+            <Select.Control>
+              <Select.Trigger>
+                <Select.ValueText placeholder="Select columns" />
+              </Select.Trigger>
+              <Select.IndicatorGroup>
+                <Select.Indicator />
+              </Select.IndicatorGroup>
+            </Select.Control>
+            <Portal>
+              <Select.Positioner>
+                <Select.Content>
+                  {columnOptions.map((option) => (
+                    <Select.Item item={option.value} key={option.value}>
+                      {option.label}
+                      <Select.ItemIndicator />
+                    </Select.Item>
+                  ))}
+                </Select.Content>
+              </Select.Positioner>
+            </Portal>
+          </Select.Root>
+
+          <Tabs.Root defaultValue="table" variant="plain" size="sm">
+            <Tabs.List bg="bg.muted" rounded="l3" p="1">
+              <Tabs.Trigger value="table">
+                <LuList />
+              </Tabs.Trigger>
+              <Tabs.Trigger value="grid">
+                <LuLayoutGrid />
+              </Tabs.Trigger>
+              <Tabs.Indicator rounded="l2" />
+            </Tabs.List>
+            {/* <Tabs.Content value="members">Manage your team members</Tabs.Content>
+            <Tabs.Content value="projects">Manage your projects</Tabs.Content>
+            <Tabs.Content value="tasks">
+              Manage your tasks for freelancers
+            </Tabs.Content> */}
+          </Tabs.Root>
+        </HStack>
+      </HStack>
+
       <Table.Root variant="line">
         <Table.Header overflow="hidden">
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row
-              bg="bg.subtle"
-              // borderBottom="none"
+              key={headerGroup.id}
+              bg="bg.muted"
               borderColor="border.emphasized"
             >
               {headerGroup.headers.map((header, index) => {
@@ -169,22 +389,6 @@ const WordlistTable = () => {
           ))}
         </Table.Header>
         <Table.Body>{rows}</Table.Body>
-        {/* <Table.Footer>
-          {table.getFooterGroups().map((footerGroup) => (
-            <Table.Row key={footerGroup.id}>
-              {footerGroup.headers.map((header) => (
-                <Table.Cell key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.footer,
-                        header.getContext()
-                      )}
-                </Table.Cell>
-              ))}
-            </Table.Row>
-          ))}
-        </Table.Footer> */}
       </Table.Root>
 
       <ActionBar.Root open={hasSelection}>
@@ -195,19 +399,38 @@ const WordlistTable = () => {
                 {selection.length} selected
               </ActionBar.SelectionTrigger>
               <ActionBar.Separator />
-              <Button variant="outline" size="sm">
-                <LuDownload />
-                CSV <Kbd>C</Kbd>
-              </Button>
-              <Button variant="outline" size="sm">
-                <LuDownload />
-                JSON <Kbd>J</Kbd>
-              </Button>
+              {/* <DownloadTrigger
+                data={wordlist.map((item) => ({
+                  text: item.text,
+                  bookTitle: item.bookTitle,
+                  dictSuffix: item.dictSuffix,
+                  dateCreated: item.dateCreated,
+                }))}
+                fileName="wordlist.csv"
+                mimeType="text/csv"
+                asChild
+              >
+                <Button variant="outline" size="sm">
+                  <LuDownload />
+                  CSV <Kbd>C</Kbd>
+                </Button>
+              </DownloadTrigger> */}
+              <DownloadTrigger
+                data={JSON.stringify(wordlist)}
+                fileName="wordlist.json"
+                mimeType="application/json"
+                asChild
+              >
+                <Button variant="outline" size="sm">
+                  <LuDownload />
+                  Download JSON
+                </Button>
+              </DownloadTrigger>
             </ActionBar.Content>
           </ActionBar.Positioner>
         </Portal>
       </ActionBar.Root>
-    </>
+    </VStack>
   );
 };
 export default WordlistTable;

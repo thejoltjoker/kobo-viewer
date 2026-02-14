@@ -1,6 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import { Outlet } from "react-router";
 import { Sidebar, getSidebarWidth } from "@/components/sidebar";
+import { Toaster } from "@/components/ui/toaster";
 import { useState } from "react";
 
 export function Layout() {
@@ -30,6 +31,7 @@ export function Layout() {
           <Outlet />
         </Box>
       </Box>
+      <Toaster />
     </Box>
   );
 }
