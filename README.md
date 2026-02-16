@@ -1,69 +1,48 @@
-# React + TypeScript + Vite
+# Kobo Companion
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web app to explore your [Kobo](https://www.kobo.com/) e-reader data in the browser. Upload your Kobo SQLite database file and browse your **word list** (lookups/highlights) and **bookmarks** with definitions from Wiktionary and book info from Open Library. All data stays in your browser; nothing is sent to a server.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Overview** — Upload and manage your Kobo database file (e.g. `KoboReader.sqlite`). Data is stored in IndexedDB so you can close the tab and return later.
+- **Word list** — View and search words you’ve looked up or highlighted, with optional Wiktionary definitions.
+- **Bookmarks** — Browse your saved bookmarks with context and optional Open Library metadata.
 
-## Expanding the ESLint configuration
+## Tech stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend:** React 19, Vite 7, Chakra UI 3, React Router 7, TanStack Query & Table
+- **Database:** sql.js (SQLite in the browser), Drizzle ORM, IndexedDB for persistence
+- **Deploy:** Cloudflare Workers (static assets + SPA fallback)
 
-```js
-export default tseslint.config([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
+## Prerequisites
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+- [Node.js](https://nodejs.org/) 18+
+- [pnpm](https://pnpm.io/) (or npm/yarn)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+## Getting started
+
+```bash
+# Install dependencies
+pnpm install
+
+# Run dev server
+pnpm dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Open the URL shown (e.g. `http://localhost:5173`), then upload your Kobo database file from the Overview page. You can copy it from your device (typically `.kobo/KoboReader.sqlite`) or from a backup.
 
-```js
-import reactDom from "eslint-plugin-react-dom";
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
+### Other scripts
 
-export default tseslint.config([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
+| Command           | Description                    |
+|------------------|--------------------------------|
+| `pnpm build`     | Type-check and production build |
+| `pnpm preview`   | Build and serve production build locally |
+| `pnpm lint`      | Run ESLint                     |
+| `pnpm lint:fix`  | Run ESLint with auto-fix       |
+| `pnpm deploy`    | Build and deploy to Cloudflare |
+
+## Releasing
+
+- **Development:** Work on feature branches and merge into `dev`. Do not push directly to `main`.
+- **Releasing:** (1) Open a PR from `dev` to `main` and merge it. (2) Release Please will open or update a "chore: release X.Y.Z" PR; merge that PR. (3) The tag and GitHub Release are created automatically.
+- **Commits:** Use [Conventional Commits](https://www.conventionalcommits.org/) so Release Please can generate the changelog and version bump: `feat:` (minor), `fix:` (patch), and `BREAKING CHANGE` or `!` in the footer for major.
