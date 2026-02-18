@@ -1,4 +1,3 @@
-// TODO Export selected as csv
 // TODO filter by book title
 // TODO filter by dict suffix (input chips)
 
@@ -21,6 +20,7 @@ import {
   Pagination,
   Portal,
   Select,
+  Spinner,
   Stack,
   Table,
   Text,
@@ -74,7 +74,7 @@ function WordlistTable() {
   });
   const { db } = useDatabase();
   const queryClient = useQueryClient();
-  const { data: wordlist = [] } = useQuery({
+  const { data: wordlist = [], isLoading: isWordlistLoading } = useQuery({
     queryKey: ["wordlist"],
     queryFn: () => getWordlistWithBookTitles(db!),
     enabled: !!db,
@@ -458,6 +458,15 @@ function WordlistTable() {
       ))}
     </Table.Row>
   ));
+
+  if (db && isWordlistLoading) {
+    return (
+      <Stack align="center" gap={3} py={12}>
+        <Spinner size="lg" colorPalette="blue" />
+        <Text color="fg.muted">Loading wordlist…</Text>
+      </Stack>
+    );
+  }
 
   return (
     <VStack gap="2">

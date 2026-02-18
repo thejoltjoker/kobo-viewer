@@ -2,6 +2,7 @@ import { Box } from "@chakra-ui/react";
 import { useState } from "react";
 import { Outlet } from "react-router";
 
+import { ErrorBoundary } from "@/components/error-boundary";
 import { Sidebar } from "@/components/sidebar";
 import { getSidebarWidth } from "@/components/sidebar/utils";
 import { Toaster } from "@/components/ui/toaster";
@@ -30,7 +31,9 @@ export function Layout() {
           bg="bg.panel"
           p={8}
         >
-          <Outlet />
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
         </Box>
       </Box>
       <Toaster />

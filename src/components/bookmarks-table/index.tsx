@@ -1,4 +1,14 @@
-import { ActionBar, Button, Checkbox, Kbd, Portal, Table } from "@chakra-ui/react";
+import {
+  ActionBar,
+  Button,
+  Checkbox,
+  Kbd,
+  Portal,
+  Spinner,
+  Stack,
+  Table,
+  Text,
+} from "@chakra-ui/react";
 import {
   createColumnHelper,
   flexRender,
@@ -19,12 +29,13 @@ function BookmarksTable() {
   const [selection, setSelection] = useState<string[]>([]);
   const { db } = useDatabase();
   const [bookmarks, setBookmarks] = useState<BookmarkWithBookMeta[]>([]);
+  const [isLoadingBookmarks, setIsLoadingBookmarks] = useState(false);
 
   const hasSelection = selection.length > 0;
 
   const columnHelper = useMemo(
     () => createColumnHelper<BookmarkWithBookMeta>(),
-    [],
+    []
   );
 
   const columns = useMemo(() => {
@@ -40,7 +51,7 @@ function BookmarksTable() {
             checked={indeterminate ? "indeterminate" : selection.length > 0}
             onCheckedChange={(changes) => {
               setSelection(
-                changes.checked ? bookmarks.map(item => item.bookmarkId) : [],
+                changes.checked ? bookmarks.map((item) => item.bookmarkId) : []
               );
             }}
           >
@@ -48,20 +59,20 @@ function BookmarksTable() {
             <Checkbox.Control />
           </Checkbox.Root>
         ),
-        cell: info => (
+        cell: (info) => (
           <Checkbox.Root
             size="sm"
             top="0.5"
             aria-label="Select row"
             checked={selection.includes(info.row.original.bookmarkId)}
             onCheckedChange={(changes) => {
-              setSelection(prev =>
+              setSelection((prev) =>
                 changes.checked
                   ? [...prev, info.row.original.bookmarkId]
                   : prev.filter(
-                      bookmarkId =>
-                        bookmarkId !== info.row.original.bookmarkId,
-                    ),
+                      (bookmarkId) =>
+                        bookmarkId !== info.row.original.bookmarkId
+                    )
               );
             }}
           >
@@ -72,33 +83,33 @@ function BookmarksTable() {
       }),
       columnHelper.accessor("text", {
         header: () => "Text",
-        cell: info => info.renderValue(),
-        footer: info => info.column.id,
+        cell: (info) => info.renderValue(),
+        footer: (info) => info.column.id,
       }),
       columnHelper.accessor("bookTitle", {
         id: "bookTitle",
         header: () => "Book Title",
-        cell: info => info.getValue(),
+        cell: (info) => info.getValue(),
       }),
       columnHelper.accessor("annotation", {
         id: "annotation",
         header: () => "Annotation",
-        cell: info => info.renderValue(),
+        cell: (info) => info.renderValue(),
       }),
       columnHelper.accessor("contextString", {
         id: "contextString",
         header: () => "Context String",
-        cell: info => info.renderValue(),
+        cell: (info) => info.renderValue(),
       }),
       columnHelper.accessor("type", {
         id: "type",
         header: () => "Type",
-        cell: info => info.renderValue(),
+        cell: (info) => info.renderValue(),
       }),
       columnHelper.accessor("dateCreated", {
         id: "dateCreated",
         header: () => "Date Created",
-        cell: info =>
+        cell: (info) =>
           info.row.original.dateCreated
             ? new Date(info.row.original.dateCreated).toLocaleDateString()
             : "-",
@@ -113,32 +124,44 @@ function BookmarksTable() {
   });
 
   useEffect(() => {
-    async function fetchWordlist() {
+    async function fetchBookmarks() {
       if (!db) {
         setBookmarks([]);
+        setIsLoadingBookmarks(false);
         return;
       }
 
       try {
+        setIsLoadingBookmarks(true);
         const bookmarksData = await getBookmarksWithBookMeta(db);
         setBookmarks(bookmarksData);
-      }
-      catch (err) {
-        console.error("Error fetching wordlist:", err);
+      } catch (err) {
+        console.error("Error fetching bookmarks:", err);
+      } finally {
+        setIsLoadingBookmarks(false);
       }
     }
 
-    fetchWordlist();
+    fetchBookmarks();
   }, [db]);
 
-  const rows = table.getRowModel().rows.map(row => (
+  if (db && isLoadingBookmarks) {
+    return (
+      <Stack align="center" gap={3} py={12}>
+        <Spinner size="lg" colorPalette="blue" />
+        <Text color="fg.muted">Loading bookmarks…</Text>
+      </Stack>
+    );
+  }
+
+  const rows = table.getRowModel().rows.map((row) => (
     <Table.Row
       key={row.id}
       data-selected={
         selection.includes(row.original.bookmarkId) ? "" : undefined
       }
     >
-      {row.getVisibleCells().map(cell => (
+      {row.getVisibleCells().map((cell) => (
         <Table.Cell key={cell.id}>
           {flexRender(cell.column.columnDef.cell, cell.getContext())}
         </Table.Cell>
@@ -150,7 +173,7 @@ function BookmarksTable() {
     <>
       <Table.Root variant="line">
         <Table.Header overflow="hidden">
-          {table.getHeaderGroups().map(headerGroup => (
+          {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row
               key={headerGroup.id}
               bg="bg.muted"
@@ -173,7 +196,7 @@ function BookmarksTable() {
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext(),
+                          header.getContext()
                         )}
                   </Table.ColumnHeader>
                 );
@@ -189,22 +212,16 @@ function BookmarksTable() {
           <ActionBar.Positioner>
             <ActionBar.Content>
               <ActionBar.SelectionTrigger>
-                {selection.length}
-                {" "}
-                selected
+                {selection.length} selected
               </ActionBar.SelectionTrigger>
               <ActionBar.Separator />
               <Button variant="outline" size="sm">
                 <LuDownload />
-                CSV
-                {" "}
-                <Kbd>C</Kbd>
+                CSV <Kbd>C</Kbd>
               </Button>
               <Button variant="outline" size="sm">
                 <LuDownload />
-                JSON
-                {" "}
-                <Kbd>J</Kbd>
+                JSON <Kbd>J</Kbd>
               </Button>
             </ActionBar.Content>
           </ActionBar.Positioner>

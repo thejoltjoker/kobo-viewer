@@ -9,6 +9,7 @@ import {
   Heading,
   HStack,
   IconButton,
+  Spinner,
   Stack,
   Text,
   VStack,
@@ -130,6 +131,7 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
                 {({ isActive }) => (
                   <Box
                     as="span"
+                    position="relative"
                     px={isCollapsed ? 2 : 3}
                     py={2}
                     borderRadius="md"
@@ -147,29 +149,77 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
                     textDecoration="none"
                   >
                     <Icon size={20} />
+                    {isCollapsed && db && (
+                      <>
+                        {link.id === "Words" && wordCount === null && (
+                          <Box
+                            position="absolute"
+                            top="50%"
+                            right={1}
+                            transform="translateY(-50%)"
+                          >
+                            <Spinner size="xs" />
+                          </Box>
+                        )}
+                        {link.id === "Bookmarks" && bookmarkCount === null && (
+                          <Box
+                            position="absolute"
+                            top="50%"
+                            right={1}
+                            transform="translateY(-50%)"
+                          >
+                            <Spinner size="xs" />
+                          </Box>
+                        )}
+                      </>
+                    )}
                     {!isCollapsed && (
                       <HStack gap={2} flex={1} justify="space-between">
                         <Text fontWeight={isActive ? "semibold" : "normal"}>
                           {link.label}
                         </Text>
-                        {link.id === "Words" && wordCount !== null && (
-                          <Badge
-                            colorScheme={isActive ? "white" : "gray"}
-                            bg={isActive ? "whiteAlpha.300" : "bg.emphasized"}
-                            color={isActive ? "white" : "fg.muted"}
-                          >
-                            {wordCount}
-                          </Badge>
-                        )}
-                        {link.id === "Bookmarks" && bookmarkCount !== null && (
-                          <Badge
-                            colorScheme={isActive ? "white" : "gray"}
-                            bg={isActive ? "whiteAlpha.300" : "bg.emphasized"}
-                            color={isActive ? "white" : "fg.muted"}
-                          >
-                            {bookmarkCount}
-                          </Badge>
-                        )}
+                        {link.id === "Words" &&
+                          db &&
+                          (wordCount !== null ? (
+                            <Badge
+                              colorScheme={isActive ? "white" : "gray"}
+                              bg={isActive ? "whiteAlpha.300" : "bg.emphasized"}
+                              color={isActive ? "white" : "fg.muted"}
+                            >
+                              {wordCount}
+                            </Badge>
+                          ) : (
+                            <Box
+                              display="inline-flex"
+                              alignItems="center"
+                              justifyContent="center"
+                              minW="6"
+                              height="1.25rem"
+                            >
+                              <Spinner size="xs" />
+                            </Box>
+                          ))}
+                        {link.id === "Bookmarks" &&
+                          db &&
+                          (bookmarkCount !== null ? (
+                            <Badge
+                              colorScheme={isActive ? "white" : "gray"}
+                              bg={isActive ? "whiteAlpha.300" : "bg.emphasized"}
+                              color={isActive ? "white" : "fg.muted"}
+                            >
+                              {bookmarkCount}
+                            </Badge>
+                          ) : (
+                            <Box
+                              display="inline-flex"
+                              alignItems="center"
+                              justifyContent="center"
+                              minW="6"
+                              height="1.25rem"
+                            >
+                              <Spinner size="xs" />
+                            </Box>
+                          ))}
                       </HStack>
                     )}
                   </Box>
