@@ -1,3 +1,6 @@
+// TODO fix float of info tooltip button
+// TODO add download csv button
+// TODO prefetch definition when hovering lookup button
 import { Heading, Text } from "@chakra-ui/react";
 
 import WordlistTable from "@/components/wordlist-table";

@@ -45,18 +45,18 @@ function WordDefinitionDrawer({
 
   const isControlled = onOpenChange != null;
   const meaningGroups = definition ? getMeaningGroups(definition) : [];
-  const errorMessage
-    = error instanceof Error ? error.message : "Failed to load definition";
+  const errorMessage =
+    error instanceof Error ? error.message : "Failed to load definition";
 
   return (
     <Drawer.Root
       open={isControlled ? open : undefined}
-      onOpenChange={isControlled ? e => onOpenChange(e.open) : undefined}
+      onOpenChange={isControlled ? (e) => onOpenChange(e.open) : undefined}
     >
       <Portal>
         <Drawer.Backdrop />
         <Drawer.Positioner padding="4">
-          <Drawer.Content rounded="md">
+          <Drawer.Content rounded="md" width="full" maxWidth="400px">
             <Drawer.Header>
               <Drawer.Title>{word || "Definition"}</Drawer.Title>
             </Drawer.Header>
@@ -80,11 +80,10 @@ function WordDefinitionDrawer({
                     <Text color="fg">{errorMessage}</Text>
                   </Box>
                   <Text color="fg.muted">
-                    Try searching on
-                    {" "}
+                    Try searching on{" "}
                     <Link
                       href={`https://www.wordreference.com/definition/${encodeURIComponent(
-                        word,
+                        word
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -92,13 +91,11 @@ function WordDefinitionDrawer({
                       textDecoration="underline"
                     >
                       WordReference
-                    </Link>
-                    {" "}
-                    or
-                    {" "}
+                    </Link>{" "}
+                    or{" "}
                     <Link
                       href={`https://en.wiktionary.org/wiki/${encodeURIComponent(
-                        word,
+                        word
                       )}`}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -115,7 +112,6 @@ function WordDefinitionDrawer({
               {!loading && !isErrorState && meaningGroups.length > 0 && (
                 <VStack align="stretch" gap="4">
                   {meaningGroups.map((item, idx) => (
-
                     <VStack
                       key={`${item.partOfSpeech}-${item.language ?? ""}-${idx}`}
                       align="stretch"
@@ -143,23 +139,19 @@ function WordDefinitionDrawer({
                         margin="0"
                         css={{ "& li": { mb: 2 } }}
                       >
-                        {(item.definitions ?? []).map(def => (
-                          <Box
-                            key={def.definition}
-                            as="li"
-                          >
+                        {(item.definitions ?? []).map((def) => (
+                          <Box key={def.definition} as="li">
                             <Prose>
                               <VStack align="stretch" gap="0.5">
-                                { }
+                                {}
                                 <Box
                                   dangerouslySetInnerHTML={{
                                     __html: rewriteWiktionaryLinks(
-                                      def.definition,
+                                      def.definition
                                     ),
                                   }}
                                 />
-                                {def.parsedExamples?.map(ex => (
-
+                                {def.parsedExamples?.map((ex) => (
                                   <Box
                                     key={ex.example}
                                     color="fg.muted"
@@ -167,23 +159,23 @@ function WordDefinitionDrawer({
                                     pl="2"
                                     dangerouslySetInnerHTML={{
                                       __html: `"${rewriteWiktionaryLinks(
-                                        ex.example,
+                                        ex.example
                                       )}"`,
                                     }}
                                   />
                                 ))}
-                                {!def.parsedExamples?.length
-                                  && def.examples?.[0] && (
-                                  <Text
-                                    color="fg.muted"
-                                    fontStyle="italic"
-                                    pl="2"
-                                  >
-                                    &quot;
-                                    {def.examples[0]}
-                                    &quot;
-                                  </Text>
-                                )}
+                                {!def.parsedExamples?.length &&
+                                  def.examples?.[0] && (
+                                    <Text
+                                      color="fg.muted"
+                                      fontStyle="italic"
+                                      pl="2"
+                                    >
+                                      &quot;
+                                      {def.examples[0]}
+                                      &quot;
+                                    </Text>
+                                  )}
                               </VStack>
                             </Prose>
                           </Box>

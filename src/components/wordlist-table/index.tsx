@@ -21,6 +21,7 @@ import {
   Pagination,
   Portal,
   Select,
+  Stack,
   Table,
   Text,
   VStack,
@@ -80,16 +81,16 @@ function WordlistTable() {
   const [drawerWord, setDrawerWord] = useState<string | null>(null);
   const dictSuffixes = useMemo(() => {
     const suffixes = wordlist
-      .map(item => item.dictSuffix)
+      .map((item) => item.dictSuffix)
       .filter((item): item is string => item != null && item !== "");
     return Array.from(new Set(suffixes))
-      .map(suffix =>
-        getDictSuffix(suffix.startsWith("-") ? suffix.slice(1) : suffix),
+      .map((suffix) =>
+        getDictSuffix(suffix.startsWith("-") ? suffix.slice(1) : suffix)
       )
       .filter((item): item is DictSuffix => item !== undefined);
   }, [wordlist]);
   const [selectedDictSuffixes, setSelectedDictSuffixes] = useState<string[]>(
-    [],
+    []
   );
   const [wordFilter, setWordFilter] = useState("");
 
@@ -97,7 +98,7 @@ function WordlistTable() {
     let result = wordlist;
     const query = wordFilter.trim().toLowerCase();
     if (query) {
-      result = result.filter(row => row.text.toLowerCase().includes(query));
+      result = result.filter((row) => row.text.toLowerCase().includes(query));
     }
     if (selectedDictSuffixes.length > 0) {
       result = result.filter((row) => {
@@ -116,8 +117,7 @@ function WordlistTable() {
         description: `"${text}" copied to clipboard`,
         type: "success",
       });
-    }
-    catch {
+    } catch {
       toaster.create({
         title: "Failed to copy",
         description: "Could not copy to clipboard",
@@ -136,12 +136,12 @@ function WordlistTable() {
 
   const columnHelper = useMemo(
     () => createColumnHelper<WordlistWithBookMeta>(),
-    [],
+    []
   );
 
   const columns = useMemo(() => {
-    const indeterminate
-      = hasSelection && selection.length < selectableWordlist.length;
+    const indeterminate =
+      hasSelection && selection.length < selectableWordlist.length;
     return [
       columnHelper.display({
         id: "select",
@@ -155,8 +155,8 @@ function WordlistTable() {
             onCheckedChange={(changes) => {
               setSelection(
                 changes.checked
-                  ? selectableWordlist.map(item => item.text)
-                  : [],
+                  ? selectableWordlist.map((item) => item.text)
+                  : []
               );
             }}
           >
@@ -164,17 +164,17 @@ function WordlistTable() {
             <Checkbox.Control />
           </Checkbox.Root>
         ),
-        cell: info => (
+        cell: (info) => (
           <Checkbox.Root
             size="sm"
             top="0.5"
             aria-label="Select row"
             checked={selection.includes(info.row.original.text)}
             onCheckedChange={(changes) => {
-              setSelection(prev =>
+              setSelection((prev) =>
                 changes.checked
                   ? [...prev, info.row.original.text]
-                  : prev.filter(text => text !== info.row.original.text),
+                  : prev.filter((text) => text !== info.row.original.text)
               );
             }}
           >
@@ -221,24 +221,22 @@ function WordlistTable() {
           const author = info.row.original.bookAuthor;
           return (
             <HStack
-              maxW="240px"
-              w="full"
+              flexGrow="0"
               overflow="hidden"
-              gap="1"
-              alignItems="center"
+              gap="2"
+              justifyContent="flex-start"
             >
-              <Box
-                minW={0}
-                flex={1}
-                overflow="hidden"
-                textOverflow="ellipsis"
-                whiteSpace="nowrap"
+              <Stack flexShrink="1" minW="0" overflow="hidden" maxW="100%">
+                <Text lineClamp={1}>{title}</Text>
+              </Stack>
+              <Stack
+                flexShrink={0}
+                flexGrow={0}
+                alignItems="center"
+                justifyContent="center"
               >
-                {title}
-              </Box>
-              <Box flexShrink={0}>
                 <BookHoverCard bookTitle={title} bookAuthor={author} />
-              </Box>
+              </Stack>
             </HStack>
           );
         },
@@ -260,7 +258,7 @@ function WordlistTable() {
         id: "dictSuffix",
         header: () => <span className="no-wrap">Dictionary</span>,
         enableSorting: true,
-        cell: info => (
+        cell: (info) => (
           <Badge
             colorPalette={
               getDictSuffix(info.getValue()?.replace(/^-/, "") ?? "")
@@ -268,10 +266,7 @@ function WordlistTable() {
             }
             textTransform="capitalize"
           >
-            {
-              getDictSuffix(info.getValue()?.replace(/^-/, "") ?? "")
-                ?.language
-            }
+            {getDictSuffix(info.getValue()?.replace(/^-/, "") ?? "")?.language}
           </Badge>
         ),
       }),
@@ -286,7 +281,7 @@ function WordlistTable() {
           const timeB = b ? new Date(b).getTime() : 0;
           return timeA - timeB;
         },
-        cell: info =>
+        cell: (info) =>
           info.row.original.dateCreated
             ? new Date(info.row.original.dateCreated).toLocaleDateString()
             : "-",
@@ -349,68 +344,73 @@ function WordlistTable() {
   const columnOptions = useMemo(() => {
     return table
       .getAllColumns()
-      .filter(column => column.id !== "select")
-      .map(column => ({
+      .filter((column) => column.id !== "select" && column.id !== "actions")
+      .map((column) => ({
         label:
           column.id === "text"
             ? "Word"
             : column.id === "bookTitle"
-              ? "Book Title"
-              : column.id === "bookAuthor"
-                ? "Author"
-                : column.id === "dictSuffix"
-                  ? "Dict Suffix"
-                  : column.id === "dateCreated"
-                    ? "Date Created"
-                    : column.id,
+            ? "Book Title"
+            : column.id === "bookAuthor"
+            ? "Author"
+            : column.id === "dictSuffix"
+            ? "Dict Suffix"
+            : column.id === "dateCreated"
+            ? "Date Created"
+            : column.id,
         value: column.id,
       }));
   }, [table]);
 
   const columnCollection = useMemo(
     () => createListCollection({ items: columnOptions }),
-    [columnOptions],
+    [columnOptions]
   );
 
   const dictSuffixOptions = useMemo(
     () =>
-      dictSuffixes.map(s => ({
+      dictSuffixes.map((s) => ({
         label: `${s.emoji} ${s.language}`,
         value: s.locale,
       })),
-    [dictSuffixes],
+    [dictSuffixes]
   );
   const dictSuffixCollection = useMemo(
     () => createListCollection({ items: dictSuffixOptions }),
-    [dictSuffixOptions],
+    [dictSuffixOptions]
   );
 
   const pageSizeOptions = useMemo(
     () =>
-      [10, 20, 50, 100].map(size => ({
+      [10, 20, 50, 100].map((size) => ({
         label: `${size} per page`,
         value: String(size),
       })),
-    [],
+    []
   );
   const pageSizeCollection = useMemo(
     () => createListCollection({ items: pageSizeOptions }),
-    [pageSizeOptions],
+    [pageSizeOptions]
   );
 
   const visibleColumnIds = useMemo(() => {
     return table
       .getAllColumns()
-      .filter(column => column.id !== "select" && column.getIsVisible())
-      .map(column => column.id);
+      .filter(
+        (column) =>
+          column.id !== "select" &&
+          column.id !== "actions" &&
+          column.getIsVisible()
+      )
+      .map((column) => column.id);
   }, [table]);
 
-  const rows = table.getRowModel().rows.map(row => (
+  const rows = table.getRowModel().rows.map((row) => (
     <Table.Row
       key={row.id}
       data-selected={selection.includes(row.original.text) ? "" : undefined}
     >
-      {row.getVisibleCells().map(cell => (
+      {row.getVisibleCells().map((cell) => (
         <Table.Cell key={cell.id}>
           {flexRender(cell.column.columnDef.cell, cell.getContext())}
         </Table.Cell>
@@ -453,8 +453,8 @@ function WordlistTable() {
                 const selected = Array.isArray(value)
                   ? value
                   : value
-                    ? [value]
-                    : [];
+                  ? [value]
+                  : [];
                 setSelectedDictSuffixes(selected);
                 table.setPageIndex(0);
               }}
@@ -473,8 +473,8 @@ function WordlistTable() {
               </Select.Control>
               <Portal>
                 <Select.Positioner>
-                  <Select.Content>
-                    {dictSuffixOptions.map(option => (
+                  <Select.Content minWidth="min-content">
+                    {dictSuffixOptions.map((option) => (
                       <Select.Item
                         item={option.value}
                         key={option.value}
@@ -500,17 +500,20 @@ function WordlistTable() {
               const selectedIds = Array.isArray(details.value)
                 ? details.value
                 : details.value
-                  ? [details.value]
-                  : [];
+                ? [details.value]
+                : [];
               const allColumnIds = table
                 .getAllColumns()
-                .filter(column => column.id !== "select")
-                .map(column => column.id);
-              // Update visibility: show selected columns, hide unselected ones
+                .filter(
+                  (column) => column.id !== "select" && column.id !== "actions"
+                )
+                .map((column) => column.id);
+              // Update visibility: show selected columns, hide unselected ones; actions always visible
               const newVisibility: Record<string, boolean> = {};
               allColumnIds.forEach((id) => {
                 newVisibility[id] = selectedIds.includes(id);
               });
+              newVisibility["actions"] = true;
               setColumnVisibility(newVisibility);
             }}
             size="sm"
@@ -529,7 +532,7 @@ function WordlistTable() {
             <Portal>
               <Select.Positioner>
                 <Select.Content>
-                  {columnOptions.map(option => (
+                  {columnOptions.map((option) => (
                     <Select.Item item={option.value} key={option.value}>
                       {option.label}
                       <Select.ItemIndicator />
@@ -543,8 +546,17 @@ function WordlistTable() {
       </HStack>
 
       <Table.Root variant="line">
+        <Table.ColumnGroup>
+          <Table.Column />
+          <Table.Column htmlWidth="20%" />
+          <Table.Column htmlWidth="30%" />
+          <Table.Column htmlWidth="15%" />
+          <Table.Column htmlWidth="15%" />
+          <Table.Column htmlWidth="10%" />
+          <Table.Column />
+        </Table.ColumnGroup>
         <Table.Header overflow="hidden">
-          {table.getHeaderGroups().map(headerGroup => (
+          {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row
               key={headerGroup.id}
               bg="bg.muted"
@@ -564,52 +576,50 @@ function WordlistTable() {
                     borderBottomRightRadius={isLast ? 5 : 0}
                     borderBottom="none"
                   >
-                    {canSort && toggleSorting
-                      ? (
-                          <button
-                            type="button"
-                            onClick={toggleSorting}
-                            title={
-                              header.column.getNextSortingOrder() === "asc"
-                                ? "Sort ascending"
-                                : header.column.getNextSortingOrder() === "desc"
-                                  ? "Sort descending"
-                                  : "Clear sort"
-                            }
-                            style={{
-                              cursor: "pointer",
-                              userSelect: "none",
-                              display: "inline-flex",
-                              alignItems: "center",
-                              gap: "4px",
-                              background: "transparent",
-                              border: "none",
-                              padding: 0,
-                              font: "inherit",
-                            }}
-                          >
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext(),
-                                )}
-                            {{
-                              asc: <LuArrowUp />,
-                              desc: <LuArrowDown />,
-                            }[header.column.getIsSorted() as string] ?? null}
-                          </button>
-                        )
-                      : (
-                          <>
-                            {header.isPlaceholder
-                              ? null
-                              : flexRender(
-                                  header.column.columnDef.header,
-                                  header.getContext(),
-                                )}
-                          </>
-                        )}
+                    {canSort && toggleSorting ? (
+                      <button
+                        type="button"
+                        onClick={toggleSorting}
+                        title={
+                          header.column.getNextSortingOrder() === "asc"
+                            ? "Sort ascending"
+                            : header.column.getNextSortingOrder() === "desc"
+                            ? "Sort descending"
+                            : "Clear sort"
+                        }
+                        style={{
+                          cursor: "pointer",
+                          userSelect: "none",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "4px",
+                          background: "transparent",
+                          border: "none",
+                          padding: 0,
+                          font: "inherit",
+                        }}
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                        {{
+                          asc: <LuArrowUp />,
+                          desc: <LuArrowDown />,
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </button>
+                    ) : (
+                      <>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </>
+                    )}
                   </Table.ColumnHeader>
                 );
               })}
@@ -633,10 +643,9 @@ function WordlistTable() {
             value={[String(pagination.pageSize)]}
             onValueChange={(details) => {
               const size = Number(
-                Array.isArray(details.value) ? details.value[0] : details.value,
+                Array.isArray(details.value) ? details.value[0] : details.value
               );
-              if (Number.isFinite(size))
-                table.setPageSize(size);
+              if (Number.isFinite(size)) table.setPageSize(size);
             }}
             size="sm"
             width="32"
@@ -653,11 +662,9 @@ function WordlistTable() {
             <Portal>
               <Select.Positioner>
                 <Select.Content>
-                  {[10, 20, 50, 100].map(size => (
+                  {[10, 20, 50, 100].map((size) => (
                     <Select.Item item={String(size)} key={size}>
-                      {size}
-                      {" "}
-                      per page
+                      {size} per page
                     </Select.Item>
                   ))}
                 </Select.Content>
@@ -668,8 +675,8 @@ function WordlistTable() {
             count={table.getRowCount()}
             page={pagination.pageIndex + 1}
             pageSize={pagination.pageSize}
-            onPageChange={details => table.setPageIndex(details.page - 1)}
-            onPageSizeChange={details => table.setPageSize(details.pageSize)}
+            onPageChange={(details) => table.setPageIndex(details.page - 1)}
+            onPageSizeChange={(details) => table.setPageSize(details.pageSize)}
             siblingCount={1}
           >
             <HStack gap="2" align="center">
@@ -710,9 +717,7 @@ function WordlistTable() {
           <ActionBar.Positioner>
             <ActionBar.Content>
               <ActionBar.SelectionTrigger>
-                {selection.length}
-                {" "}
-                selected
+                {selection.length} selected
               </ActionBar.SelectionTrigger>
               <ActionBar.Separator />
               <DownloadTrigger

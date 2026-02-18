@@ -24,10 +24,7 @@ export interface BookHoverCardProps {
   bookAuthor?: string | null;
 }
 
-export function BookHoverCard({
-  bookTitle,
-  bookAuthor,
-}: BookHoverCardProps) {
+export function BookHoverCard({ bookTitle, bookAuthor }: BookHoverCardProps) {
   const { data: book, isLoading } = useQuery({
     queryKey: ["book", bookTitle, bookAuthor ?? ""],
     queryFn: () =>
@@ -47,22 +44,29 @@ export function BookHoverCard({
     enabled: !!workKey,
   });
 
-  const coverUrl
-    = doc?.cover_i != null
+  const coverUrl =
+    doc?.cover_i != null
       ? `${COVERS_BASE}/b/id/${doc.cover_i}-M.jpg`
       : undefined;
   const authors = doc?.author_name?.slice(0, 2).join(", ");
   const year = doc?.first_publish_year;
 
   const goodreadsFallbackUrl = getGoodreadsSearchUrl(
-    [bookTitle, bookAuthor].filter(Boolean).join(" ").trim() || bookTitle,
+    [bookTitle, bookAuthor].filter(Boolean).join(" ").trim() || bookTitle
   );
   const goodreadsLinkUrl = goodreadsUrl ?? goodreadsFallbackUrl;
 
   return (
     <HoverCard.Root size="sm" openDelay={100}>
       <HoverCard.Trigger asChild>
-        <Box color="fg.subtle" _hover={{ color: "fg" }}>
+        <Box
+          as="span"
+          display="inline-flex"
+          alignItems="center"
+          color="fg.subtle"
+          _hover={{ color: "fg" }}
+          verticalAlign="middle"
+        >
           <LuInfo />
         </Box>
       </HoverCard.Trigger>
@@ -79,18 +83,16 @@ export function BookHoverCard({
                 height="90px"
                 width="60px"
               >
-                {isLoading
-                  ? (
-                      <Avatar.Fallback>
-                        <Spinner size="sm" />
-                      </Avatar.Fallback>
-                    )
-                  : (
-                      <>
-                        <Avatar.Image src={coverUrl} alt="" />
-                        <Avatar.Fallback name={doc?.title ?? bookTitle} />
-                      </>
-                    )}
+                {isLoading ? (
+                  <Avatar.Fallback>
+                    <Spinner size="sm" />
+                  </Avatar.Fallback>
+                ) : (
+                  <>
+                    <Avatar.Image src={coverUrl} alt="" />
+                    <Avatar.Fallback name={doc?.title ?? bookTitle} />
+                  </>
+                )}
               </Avatar.Root>
               <Stack gap="1" minW={0}>
                 <Text textStyle="sm" fontWeight="semibold" lineClamp={2}>
