@@ -1,12 +1,7 @@
 import type { ReactNode } from "react";
 import type { Database } from "sql.js";
 
-import {
-  createContext,
-  use,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, use, useEffect, useState } from "react";
 
 import type { DrizzleDb } from "./index";
 
@@ -24,10 +19,11 @@ interface DatabaseContextValue {
   initializeDatabase: (buffer: ArrayBuffer) => Promise<void>;
   clearDatabase: () => Promise<void>;
   lastUploaded: Date | null;
+  databaseSizeBytes: number | null;
 }
 
 const DatabaseContext = createContext<DatabaseContextValue | undefined>(
-  undefined,
+  undefined
 );
 
 interface DatabaseProviderProps {
@@ -40,6 +36,9 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
   const [error, setError] = useState<Error | null>(null);
   const [, setSqlDb] = useState<Database | null>(null);
   const [lastUploaded, setLastUploaded] = useState<Date | null>(null);
+  const [databaseSizeBytes, setDatabaseSizeBytes] = useState<number | null>(
+    null
+  );
 
   // Load database from IndexedDB on mount
   useEffect(() => {
@@ -54,18 +53,17 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
         const buffer = await loadDatabase();
 
         if (buffer) {
+          setDatabaseSizeBytes(buffer.byteLength);
           const database = await initDatabase(buffer);
           const drizzleDb = createDrizzleDb(database);
           setSqlDb(database);
           setDb(drizzleDb);
         }
-      }
-      catch (err) {
+      } catch (err) {
         setError(
-          err instanceof Error ? err : new Error("Failed to load database"),
+          err instanceof Error ? err : new Error("Failed to load database")
         );
-      }
-      finally {
+      } finally {
         setIsLoading(false);
       }
     }
@@ -84,20 +82,19 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
 
       // Save to IndexedDB
       await saveDatabase(buffer);
+      setDatabaseSizeBytes(buffer.byteLength);
       localStorage.setItem("lastUploaded", new Date().toISOString());
       setLastUploaded(new Date());
 
       // Update state
       setSqlDb(database);
       setDb(drizzleDb);
-    }
-    catch (err) {
+    } catch (err) {
       setError(
-        err instanceof Error ? err : new Error("Failed to initialize database"),
+        err instanceof Error ? err : new Error("Failed to initialize database")
       );
       throw err;
-    }
-    finally {
+    } finally {
       setIsLoading(false);
     }
   };
@@ -114,15 +111,14 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
       setSqlDb(null);
       setDb(null);
       setLastUploaded(null);
+      setDatabaseSizeBytes(null);
       localStorage.removeItem("lastUploaded");
-    }
-    catch (err) {
+    } catch (err) {
       setError(
-        err instanceof Error ? err : new Error("Failed to clear database"),
+        err instanceof Error ? err : new Error("Failed to clear database")
       );
       throw err;
-    }
-    finally {
+    } finally {
       setIsLoading(false);
     }
   };
@@ -134,13 +130,10 @@ export function DatabaseProvider({ children }: DatabaseProviderProps) {
     initializeDatabase,
     clearDatabase,
     lastUploaded,
+    databaseSizeBytes,
   };
 
-  return (
-    <DatabaseContext value={value}>
-      {children}
-    </DatabaseContext>
-  );
+  return <DatabaseContext value={value}>{children}</DatabaseContext>;
 }
 
 // Hook must live here to access DatabaseContext; fast-refresh rule disabled
@@ -149,7 +142,7 @@ export function useDatabaseContext() {
   const context = use(DatabaseContext);
   if (context === undefined) {
     throw new Error(
-      "useDatabaseContext must be used within a DatabaseProvider",
+      "useDatabaseContext must be used within a DatabaseProvider"
     );
   }
   return context;

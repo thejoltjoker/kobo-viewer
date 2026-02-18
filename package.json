@@ -11,7 +11,8 @@
     "preview": "pnpm run build && vite preview",
     "deploy": "pnpm run build && wrangler deploy",
     "deploy:versions": "pnpm run build && wrangler versions upload",
-    "cf-typegen": "wrangler types"
+    "cf-typegen": "wrangler types",
+    "test": "vitest"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.33.0",

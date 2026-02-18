@@ -9,6 +9,8 @@ export function OverviewPage() {
         Welcome to the Kobo Reader
       </Heading>
       <Text mb={6}>Upload a Kobo database file to get started.</Text>
+      {/* TODO  show stats or analytics from database if one is uploaded https://www.chakra-ui.com/docs/components/stat */}
+
       <Dropzone />
     </>
   );

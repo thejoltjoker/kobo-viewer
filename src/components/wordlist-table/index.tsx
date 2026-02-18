@@ -26,7 +26,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createColumnHelper,
   flexRender,
@@ -39,10 +39,12 @@ import { useMemo, useState } from "react";
 import {
   LuArrowDown,
   LuArrowUp,
+  LuBookA,
   LuChevronLeft,
   LuChevronRight,
   LuCopy,
   LuDownload,
+  LuLanguages,
   LuSearch,
 } from "react-icons/lu";
 
@@ -56,6 +58,8 @@ import WordDefinitionDrawer from "@/components/word-definition-drawer";
 import { useDatabase } from "@/lib/db/hooks";
 import { getWordlistWithBookTitles } from "@/lib/db/queries";
 import { getDictSuffix } from "@/lib/utils/dict-suffixes";
+import { getWiktionaryDefinition } from "@/lib/api/wiktionary";
+import { convertWordlistToCSV, getGoogleTranslateUrl } from "./utils";
 
 export interface WordlistProps {}
 
@@ -69,6 +73,7 @@ function WordlistTable() {
     pageSize: 10,
   });
   const { db } = useDatabase();
+  const queryClient = useQueryClient();
   const { data: wordlist = [] } = useQuery({
     queryKey: ["wordlist"],
     queryFn: () => getWordlistWithBookTitles(db!),
@@ -129,6 +134,18 @@ function WordlistTable() {
   const openDefinitionDrawer = (word: string) => {
     setDrawerWord(word);
     setDrawerOpen(true);
+  };
+
+  const prefetchDefinition = (word: string) => {
+    queryClient.prefetchQuery({
+      queryKey: ["definition", word],
+      queryFn: () => getWiktionaryDefinition(word),
+    });
+  };
+
+  const openGoogleTranslate = (word: string) => {
+    const url = getGoogleTranslateUrl(word);
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const hasSelection = selection.length > 0;
@@ -311,9 +328,24 @@ function WordlistTable() {
                   fill="fg.subtle"
                   color="fg.subtle"
                   onClick={() => openDefinitionDrawer(info.row.original.text)}
+                  onMouseEnter={() =>
+                    prefetchDefinition(info.row.original.text)
+                  }
                   aria-label={`Look up "${info.row.original.text}" in dictionary`}
                 >
-                  <LuSearch />
+                  <LuBookA />
+                </IconButton>
+              </Tooltip>
+              <Tooltip content="Translate in Google Translate">
+                <IconButton
+                  variant="ghost"
+                  size="sm"
+                  fill="fg.subtle"
+                  color="fg.subtle"
+                  onClick={() => openGoogleTranslate(info.row.original.text)}
+                  aria-label={`Translate "${info.row.original.text}" in Google Translate`}
+                >
+                  <LuLanguages />
                 </IconButton>
               </Tooltip>
             </HStack>
@@ -321,7 +353,16 @@ function WordlistTable() {
         },
       }),
     ];
-  }, [selection, selectableWordlist, columnHelper, hasSelection]);
+  }, [
+    selection,
+    selectableWordlist,
+    columnHelper,
+    hasSelection,
+    handleCopy,
+    openDefinitionDrawer,
+    prefetchDefinition,
+    openGoogleTranslate,
+  ]);
 
   const table = useReactTable({
     columns,
@@ -721,7 +762,30 @@ function WordlistTable() {
               </ActionBar.SelectionTrigger>
               <ActionBar.Separator />
               <DownloadTrigger
-                data={JSON.stringify(filteredWordlist)}
+                data={convertWordlistToCSV(
+                  selection.length > 0
+                    ? filteredWordlist.filter((item) =>
+                        selection.includes(item.text)
+                      )
+                    : filteredWordlist
+                )}
+                fileName="wordlist.csv"
+                mimeType="text/csv"
+                asChild
+              >
+                <Button variant="outline" size="sm">
+                  <LuDownload />
+                  Download CSV
+                </Button>
+              </DownloadTrigger>
+              <DownloadTrigger
+                data={JSON.stringify(
+                  selection.length > 0
+                    ? filteredWordlist.filter((item) =>
+                        selection.includes(item.text)
+                      )
+                    : filteredWordlist
+                )}
                 fileName="wordlist.json"
                 mimeType="application/json"
                 asChild

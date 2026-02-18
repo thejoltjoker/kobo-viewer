@@ -9,6 +9,7 @@ import {
   Heading,
   HStack,
   IconButton,
+  Stack,
   Text,
   VStack,
 } from "@chakra-ui/react";
@@ -27,6 +28,7 @@ import { ClearDatabaseDialog } from "@/components/dialogs/clear-database-dialog"
 import { ColorModeIcon } from "@/components/ui/color-mode";
 import { useColorMode } from "@/components/ui/color-mode-hooks";
 import { useDatabase } from "@/lib/db/hooks";
+import { formatDatabaseSize } from "./utils";
 import { getBookmarksCount, getWordlistCount } from "@/lib/db/queries";
 
 export interface NavLinkConfig {
@@ -54,7 +56,7 @@ const navLinks: NavLinkConfig[] = [
 
 export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
   const sidebarWidth = isCollapsed ? "64px" : "240px";
-  const { db, lastUploaded } = useDatabase();
+  const { db, lastUploaded, databaseSizeBytes } = useDatabase();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toggleColorMode, colorMode } = useColorMode();
   const [wordCount, setWordCount] = useState<number | null>(null);
@@ -73,8 +75,7 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
         setWordCount(wordCountData);
         const bookmarkCountData = await getBookmarksCount(db);
         setBookmarkCount(bookmarkCountData);
-      }
-      catch (err) {
+      } catch (err) {
         console.error("Error fetching word count:", err);
         setWordCount(null);
         setBookmarkCount(null);
@@ -110,13 +111,11 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
             variant="ghost"
             onClick={onToggleCollapse}
           >
-            {isCollapsed
-              ? (
-                  <LuChevronRight size={16} />
-                )
-              : (
-                  <LuChevronLeft size={16} />
-                )}
+            {isCollapsed ? (
+              <LuChevronRight size={16} />
+            ) : (
+              <LuChevronLeft size={16} />
+            )}
           </IconButton>
         </HStack>
         <VStack align="stretch" height="100%" gap={2}>
@@ -181,44 +180,55 @@ export function Sidebar({ isCollapsed, onToggleCollapse }: SidebarProps) {
         </VStack>
         {db && (
           <>
-            {isCollapsed
-              ? (
-                  <IconButton
-                    aria-label="Remove database"
-                    variant="ghost"
-                    colorScheme="red"
-                    size="sm"
-                    onClick={() => setIsDialogOpen(true)}
-                    title="Remove database"
-                  >
-                    <LuTrash2 size={16} />
-                  </IconButton>
-                )
-              : (
-                  <Card.Root size="sm">
-                    <Card.Header>
-                      <Heading size="md">Database</Heading>
-                    </Card.Header>
-                    <Card.Body color="fg.muted">
-                      <DataList.Root size="md">
+            {isCollapsed ? (
+              <IconButton
+                aria-label="Remove database"
+                variant="ghost"
+                colorScheme="red"
+                size="sm"
+                onClick={() => setIsDialogOpen(true)}
+                title="Remove database"
+              >
+                <LuTrash2 size={16} />
+              </IconButton>
+            ) : (
+              <Card.Root size="sm">
+                <Card.Header>
+                  <Heading size="md">Database</Heading>
+                </Card.Header>
+                <Card.Body color="fg.muted">
+                  <Stack gap="2">
+                    <DataList.Root size="sm" variant="bold">
+                      {databaseSizeBytes !== null && (
                         <DataList.Item>
-                          <DataList.ItemLabel>Last uploaded</DataList.ItemLabel>
+                          <DataList.ItemLabel>Size</DataList.ItemLabel>
                           <DataList.ItemValue>
-                            {lastUploaded?.toLocaleDateString()}
+                            {formatDatabaseSize(databaseSizeBytes)}
                           </DataList.ItemValue>
                         </DataList.Item>
-                      </DataList.Root>
-                      <Button
-                        size="sm"
-                        onClick={() => setIsDialogOpen(true)}
-                        gap={2}
-                      >
-                        <LuTrash2 size={18} />
-                        <Text>Remove Database</Text>
-                      </Button>
-                    </Card.Body>
-                  </Card.Root>
-                )}
+                      )}
+                      <DataList.Item>
+                        <DataList.ItemLabel>Last uploaded</DataList.ItemLabel>
+                        <DataList.ItemValue>
+                          {lastUploaded?.toLocaleString(undefined, {
+                            dateStyle: "short",
+                            timeStyle: "short",
+                          })}
+                        </DataList.ItemValue>
+                      </DataList.Item>
+                    </DataList.Root>
+                    <Button
+                      size="sm"
+                      onClick={() => setIsDialogOpen(true)}
+                      gap={2}
+                    >
+                      <LuTrash2 size={18} />
+                      <Text>Remove Database</Text>
+                    </Button>
+                  </Stack>
+                </Card.Body>
+              </Card.Root>
+            )}
             <ClearDatabaseDialog
               isOpen={isDialogOpen}
               onOpenChange={setIsDialogOpen}
